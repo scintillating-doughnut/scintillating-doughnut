@@ -22,7 +22,6 @@ Once the project moves into development, the press release can be used as a touc
 
 ## Summary ##
 The Savory breakfast food have gotten sick and tired of taking a backseat to the sugary and sweet breakfast food. They're disguising themselves as sweet, but are actually salty underneath. Now it's up to the Mighty Scintillating Doughnut to prevent a breakfast table takeover.
-  > Give a summary of the product and the benefit. Assume the reader will not read anything else so make this paragraph good.
 
 ## Problem ##
 Conventional board games requires a significant set-up time and increases drastically with increased players. The Mighty Scintillating Doughnut is here to get to the chase.
