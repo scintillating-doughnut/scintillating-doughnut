@@ -1,0 +1,20 @@
+{
+  "name": "scintillating-doughnut",
+  "version": "1.0.0",
+  "description": "A friendly breakfast game",
+  "main": "server/server.js",
+  "scripts": {
+    "test": "test",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scintillating-doughnut/scintillating-doughnut.git"
+  },
+  "author": "Kevin Weng, Kris Lee, Justin Shaw, Dakota Peel",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/scintillating-doughnut/scintillating-doughnut/issues"
+  },
+  "homepage": "https://github.com/scintillating-doughnut/scintillating-doughnut#readme"
+}
