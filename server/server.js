@@ -57,7 +57,9 @@ io.on('connection', function (client) {
       //to gameLogic to start game
       if(readyCounter === currentPlayers.length){
         currentGame = new gameLogic.GameState(currentPlayers);
-        client.emit('game-state', currentGame);
+        client.emit('game-state-ready', currentGame);
+      } else {
+        client.emit('game-state-notReady', 'Not Ready' );
       }
     });
 
@@ -68,8 +70,10 @@ io.on('connection', function (client) {
       };
 
       teamVoteCounter++
+      
       //send each playerVote to gameLogic with the currentGame
 
+      //this will happen when each player has voted
       if(teamVoteCounter===currentPlayers.length){
         //send to gameLogic to canvas votes, game logic will
         //return if vote passed or not
@@ -77,7 +81,7 @@ io.on('connection', function (client) {
         //emit state of current state to object
         client.emit('game-state', currentGame);
 
-        //clear teamVoteCounter to 0;
+        //clear teamVoteCounter to 0 for the next team vote
         teamVoteCounter = 0;
       } else {
         client.emit('game-state', "not ready");
@@ -86,25 +90,35 @@ io.on('connection', function (client) {
     });
 
     client.on('teamQuestVote', function (name, vote) {
+      questVoteCounter++;
+
       var playerVote  = { 
         name: name,
         teamVote: vote
-
-        gameLogic.vote(currentGame);
       };
+      
+      gameLogic.vote();
 
       //send playerVote and currentGame to gameLogic 
 
       //send game state object to client
-      client.emit('game-state', currentGame);
+      client.emit('game-state-ready', currentGame);
 
     });
 
-    client.on('startQuestMemberSelection', function (name) ) {
+    client.on('confirmQuestMembers', function (names) {
       //send playerName and currentGame to gameLogic
 
-      
-    }
+      //send game state object to client
+      client.emit('game-state-ready', currentGame);
+
+    });
+
+    client.on('questSize', function (names) {
+      //ask gameLogic for number of quest members needed
+      var size = gameLogic.getquestSize();
+      client.emit('questSizeReply', size);
+    });
 
 
 
@@ -155,9 +169,9 @@ app.post('api/game/end', function (req, res) {
 });
 
 //
-// app.get('/api/stats', gameController.allStats);
+app.get('/api/stats', gameController.allStats);
 
-// app.post('api/stats', gameController.addGameStats);
+app.post('api/stats', gameController.addGameStats);
 
 
 
