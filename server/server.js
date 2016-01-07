@@ -124,51 +124,6 @@ io.on('connection', function (client) {
 
 });
 
-app.post('/api/player/', function (req, res) {
-   //if gameState = true, send an error, user shouldn'y be able to join 
-
-  // if(gameState.inPlay ==== true){
-  //   res.send("send error")
-  // }
-  currentPlayers.push(req.body.name);
-  res.json({name: req.body.name});
-
-
-});
-
-//start a game
-app.post('api/game/start', function (req, res) {
-  //game.GameState(currentPlayers);
-});
-
-//make moves
-app.put('api/game/move/:moveType', function (req, res) {
-  console.log("move type", req.params.moveType);
-  var move = req.params.moveType;
-
-  if(move === "setTeam"){
-    //set isOnTeam properties of chosen players to true;
-  }
-
-  if(move === "teamVote"){
-    //iterate through all players and count team votes
-    //respond with pass or fail, set failedTeamVotes accpurdingly
-  }
-
-  if(move === "questVote"){
-    //iterate through all players that isOnTeam and check
-    //questVote, if any are false, failedQuest++ and respond
-    //with fail, otherwise, respond with pass
-  }
-
-});
-
-//ends a game, responds with game results
-app.post('api/game/end', function (req, res) {
-  gameState.inPlay = true;
-});
-
-//
 app.get('/api/stats', gameController.allStats);
 
 app.post('api/stats', gameController.addGameStats);
