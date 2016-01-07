@@ -1,5 +1,8 @@
 <div ng-controller="gameCtrl">
-  <div ng-repeat="player in allPlayers | orderBy: '-highScore' | limitTo:8">
-    <!-- stuff -->
+  <div ng-repeat="player in gameState.players">
+
+    <label><input type="checkbox" ng-model="player.onQuest">{{player.playerName}}</label>
+    On team: {{player.onQuest}}
+
   </div>
 </div>

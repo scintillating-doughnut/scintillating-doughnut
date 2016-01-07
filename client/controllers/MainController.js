@@ -13,6 +13,7 @@ var app = angular.module('SD', [])
       ////////////////////////////////////////
       // send this input playerName to server
       ////////////////////////////////////////
+      socket.emit('enterPlayerName', $scope.playerName);
     };
 
     // when player votes yes for the team
@@ -27,6 +28,7 @@ var app = angular.module('SD', [])
         ////////////////////////////////////////
         // send this input playerName to server
         ////////////////////////////////////////
+        socket.emit('playerInput', $scope.thisPlayer);
       }
     };
 
@@ -42,7 +44,69 @@ var app = angular.module('SD', [])
         ////////////////////////////////////////
         // send this input playerName to server
         ////////////////////////////////////////
+        socket.emit('playerInput', $scope.thisPlayer);
+      }
+    };
+
+    // when player votes yes for the quest
+    $scope.voteYesForQuest = function () {
+      // only count the vote if the player hasn't voted for the quest yet
+      if ($scope.thisPlayer.votedForQuest === false ) {
+        $scope.thisPlayer.questVote = true;
+
+        // State that the player has voted for quest already
+        $scope.thisPlayer.votedForQuest = true;
+
+        ////////////////////////////////////////
+        // send this input playerName to server
+        ////////////////////////////////////////
+        socket.emit('playerInput', $scope.thisPlayer);
+      }
+    };
+
+    // when player votes yes for the quest
+    $scope.voteNoForQuest = function () {
+      // only count the vote if the player hasn't voted for the quest yet
+      if ($scope.thisPlayer.votedForTeam === false ) {
+        $scope.thisPlayer.questVote = false;
+
+        // State that the player has voted for quest already
+        $scope.thisPlayer.votedForQuest = true;
+
+        ////////////////////////////////////////
+        // send this input playerName to server
+        ////////////////////////////////////////
+        socket.emit('playerInput', $scope.thisPlayer);
+      }
+    };
+
+    // when captain finishes selecting quest team, and confirms
+    $scope.confirmQuestMembers = function () {
+      // only sends data to server if this player is a captain
+      if ($scope.thisPlayer.isCaptain) {
+
+        // after setting those player's .onQuest to be true, send the gameState.
+        socket.emit('confirmQuestMembers', $scope.gameState);
+      }
+    };
+
+    // captain clicks button to start selecting quest members
+    $scope.startQuestMemberSelection = function () {
+      if($scope.thisPlayer.isCaptain) {
+        // do something to the game state;
+        // $scope.gameState;
+        socket.emit('startQuestMemberSelection', $scope.gameState);
       }
     };
 
   });
+
+
+
+
+
+
+
+
+
+
