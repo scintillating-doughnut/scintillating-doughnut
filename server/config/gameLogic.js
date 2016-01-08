@@ -5,9 +5,11 @@ var GameState = function (players) {
   this.gameOver = false;
   this.players = [];
   this.questNumber = 1;
+  this.numberOfPlayersOnQuest = peopleNeededForQuest(this);
   this.goodWins = 0;
   this.badWins = 0;
   this.teamVoteFails = 1;
+  this.winner = null;
   this.numberOfPlayers = players.length;
   this.availableRoles = randomRoles(this.numberOfPlayers);
   this.questSet = {1 : null, 2 : null, 3 : null, 4 : null, 5 : null};
@@ -94,11 +96,14 @@ var rotateLeader = function (gameInstance) {
 
 //will set players that are confirmed for a quest team. takes and input array of player names.
 var confirmQuestMembers = function (gameInstance, playerNames) {
+  resetQuestMembers(gameInstance);
   for (var i = 0; i < gameInstance.numberOfPlayers; i++) {
     if (playerNames.indexOf(gameInstance.players[i].name) !== -1) {
       gameInstance.players[i].onQuest = true;
     }
   }
+  resetTeamVote(gameInstance);
+  resetQuestVotes(gameInstance);
 };
 
 //will reset all players onQuest property to false for new vote.
@@ -180,6 +185,13 @@ var teamVoteOutcome = function (gameInstance) {
       return null;
     }
   }
+  if (yesCount > noCount) {
+    gameInstance.teamVoteFails = 1;
+  } else {
+    gameInstance.teamVoteFails++;
+  }
+  rotateLeader(gameInstance);
+  //resetTeamVote(gameInstance);
   return yesCount > noCount;
 };
 
@@ -228,20 +240,23 @@ var finishQuest = function (gameInstance) {
     return null;
   }
   gameInstance.questNumber++;
-  return checkGameOver(gameInstance);
+  gameInstance.numberOfPlayersOnQuest = peopleNeededForQuest(gameInstance);
+  checkGameOver(gameInstance);
 };
 
 //game over then will returun true if good won the game false if bad won the game and null
 // if theres no game over and continue playing;
 var checkGameOver = function (gameInstance) {
+  if (gameInstance.teamVoteFails >5) {
+    gameInstance.gameOver = true;
+    gameInstance.winner = false;
+  }
   if (gameInstance.goodWins === 3) {
     gameInstance.gameOver = true;
-    return true;
+    gameInstance.winner = true;
   } else if (gameInstance.badWins === 3) {
     gameInstance.gameOver = true;
-    return false;
-  } else {
-    return null;
+    gameInstance.winner = false;
   }
 };
 
@@ -294,8 +309,8 @@ var peopleNeededForQuest = function (gameInstance) {
 
 //test for other functions
 
-//var test = new GameState(['six','dakota','kevin','kris','justin','hacker','seven']);
-// console.log(test);
+var test = new GameState(['six','dakota','kevin','kris','justin','hacker','seven']);
+console.log(test);
 // rotateLeader(test);
 // test.questNumber = 4;
 // test.badWins = 2;
