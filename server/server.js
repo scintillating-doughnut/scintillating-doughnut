@@ -46,7 +46,7 @@ io.on('connection', function (client) {
     console.log('player name received: ', data);
     
     currentPlayers.push(data);
-    client.emit('messages', data +' added ');
+    io.emit('messages', data +' added ');
     console.log("Player Array ", currentPlayers);
   });
 
@@ -60,11 +60,11 @@ io.on('connection', function (client) {
     //to gameLogic to start game
     if(readyCounter === currentPlayers.length){
       currentGame = new gameLogic.GameState(currentPlayers);
-      client.emit('game-state-ready', currentGame);
+      io.emit('game-state-ready', currentGame);
       console.log("teamReady");
       console.log(currentGame);
     } else {
-      client.emit('game-state-notReady', 'Not Ready' );
+      io.emit('game-state-notReady', 'Not Ready' );
     }
   });
 
@@ -93,13 +93,13 @@ io.on('connection', function (client) {
         gameLogic.checkGameOver(currentGame);
       }
       //emit state of current state to object
-      client.emit('game-state', currentGame);
+      io.emit('game-state', currentGame);
 
       //clear teamVoteCounter to 0 for the next team vote
       teamVoteCounter = 0;
 
     } else {
-      client.emit('game-state', "not ready");
+      io.emit('game-state', "not ready");
     }
 
   });
@@ -115,8 +115,8 @@ io.on('connection', function (client) {
       gameLogic.finishQuest(currentGame);
 
       //sends 
-      client.emit('quest-game', result)
-      client.emit('game-state', game)
+      io.emit('quest-game', result)
+      io.emit('game-state', game)
 
       //resets questVoteCounter to 0
       questVoteCounter = 0;
@@ -132,7 +132,7 @@ io.on('connection', function (client) {
     }
 
     //send game state object to client
-    client.emit('captain-team-pick', currentGame);
+    io.emit('captain-team-pick', currentGame);
 
   });
 
