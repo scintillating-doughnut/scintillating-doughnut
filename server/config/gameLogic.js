@@ -286,6 +286,15 @@ var peopleNeededForQuest = function (gameInstance) {
   return people;
 };
 
+module.exports = {
+  GameState: GameState,
+  CreatePlayer: CreatePlayer,
+  teamVoteOutcome: teamVoteOutcome,
+  resetQuestMembers: resetQuestMembers,
+  confirmQuestMembers: confirmQuestMembers,
+  checkGameOver: checkGameOver
+}
+
 
 //test for number of people in game function
 
@@ -309,8 +318,8 @@ var peopleNeededForQuest = function (gameInstance) {
 
 //test for other functions
 
-var test = new GameState(['six','dakota','kevin','kris','justin','hacker','seven']);
-console.log(test);
+// var test = new GameState(['six','dakota','kevin','kris','justin','hacker','seven']);
+// console.log(test);
 // rotateLeader(test);
 // test.questNumber = 4;
 // test.badWins = 2;

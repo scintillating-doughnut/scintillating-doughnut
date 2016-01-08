@@ -1,7 +1,7 @@
 var Gamestats = require('./gameModel.js');
     Q = require('q');
 
-var getStats = Q.nbind(Gamestats.find. Gamestats);
+var getStats = Q.nbind(Gamestats.find, Gamestats);
 var addStats = Q.nbind(Gamestats.create, Gamestats);
 
 module.exports = {
