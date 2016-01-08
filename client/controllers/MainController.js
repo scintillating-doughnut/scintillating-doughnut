@@ -4,7 +4,7 @@ var socket = io();
 //dedeoop
 //prune
 var app = angular.module('SD', [])
-  .controller('gameCtrl', function ($scope, $window, $location) {
+  .controller('gameCtrl', function ($scope, $timeout) {
 
     // var socket = io.connect();
     // initialize the controller
@@ -12,17 +12,19 @@ var app = angular.module('SD', [])
     // initialize the playerName
     $scope.playerName = '';
     $scope.gameStatus = '';
+    $scope.gameState = {players: []};
+    $scope.showRoster = false;
 
     // when player enters a name, update the $scope
-    $scope.enterPlayerName = function (name) {
-      $scope.playerName = name; 
+    $scope.enterPlayerName = function () {
+      $scope.playerName = $scope.nameInput;
       $scope.nameInput = '';
 
       ////////////////////////////////////////
       // send this input playerName to server
       ////////////////////////////////////////
       socket.emit('enterPlayerName', $scope.playerName);
-      console.log($scope.playerName + " should've been sent to server.")
+      console.log($scope.playerName + " should've been sent to server.");
     };
 
     $scope.ready = function () {
@@ -43,7 +45,7 @@ var app = angular.module('SD', [])
         ////////////////////////////////////////
         // send this input playerName to server
         ////////////////////////////////////////
-        socket.emit('teamPlayerVote', {name: $scope.playerName, teamVote:true})
+        socket.emit('teamPlayerVote', {name: $scope.playerName, teamVote:true});
       
     };
 
@@ -122,7 +124,14 @@ var app = angular.module('SD', [])
     socket.on('game-state-ready', function(gameStateObject){
       alert("All players ready! See console for gamestate object");
       console.log(gameStateObject);
-    })
+      // set global gameState with incoming gameStateobject
+      $scope.gameState = gameStateObject;
+
+      // Work around to update roster, due to ng-repeat one-time binding characteristic
+      $timeout(function() {
+        $scope.showRoster = true;
+      });
+    });
 
 });
 
