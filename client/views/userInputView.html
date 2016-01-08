@@ -1,0 +1,21 @@
+    <div class="userInput" style="border:2px solid black">
+      <h3>Player Input</h3>
+      <div class="voteForTeam" ng-show="gameState.votingForTeam" style="border:1px solid black;">
+        Would you like this team to go on a quest together?<br>
+        <div class="voteYesForTeam" style="background-color:blue; text-align:center"  ng-click="voteYesForTeam()">Aye Aye</div>
+        <div class="voteNoForTeam" style="background-color:red; text-align:center"  ng-click="voteNoForTeam()">Nay Nay</div>
+<!-- 
+        <button ng-click="voteYesForTeam()">Aye Aye</button>
+        <button ng-click="voteNoForTeam()">Nay Nay</button> -->
+      </div>
+
+      <div class="voteForQuest" ng-show="gameState.votingForQuest" style="clear:both; border:1px solid black">
+        How do you feel about this quest?<br>
+        <div class="voteYesForQuest" style="background-color:blue; text-align:center" ng-click="voteYesForQuest()">Let us conquer this quest</div>
+        <div class="voteNoForQuest" style="background-color:red; text-align:center" ng-click="voteNoForQuest()">Quest too hard, I quit</div>
+
+
+<!--         <button ng-click="voteYesForQuest()">Let us conquer this quest</button>
+        <button ng-click="voteNoForQuest()">Quest too hard, I quit</button> -->
+      </div>
+    </div>
