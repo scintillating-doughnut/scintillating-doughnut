@@ -121,7 +121,7 @@ var app = angular.module('SD', [])
 
     socket.on('game-state-ready', function(gameStateObject){
       alert("All players ready! See console for gamestate object");
-      console.log(gamestateObject);
+      console.log(gameStateObject);
     })
 
 });
