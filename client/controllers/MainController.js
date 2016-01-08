@@ -14,8 +14,8 @@ var app = angular.module('SD', [])
     $scope.gameStatus = '';
 
     // when player enters a name, update the $scope
-    $scope.enterPlayerName = function () {
-      $scope.playerName = $scope.nameInput; 
+    $scope.enterPlayerName = function (name) {
+      $scope.playerName = name; 
       $scope.nameInput = '';
 
       ////////////////////////////////////////
