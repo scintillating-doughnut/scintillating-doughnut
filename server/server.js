@@ -43,9 +43,11 @@ io.on('connection', function (client) {
   //on hearing enterPlayerName event, push player name
   //to array
   client.on('enterPlayerName', function (data) {
+    console.log('player name received: ', data);
+    
     currentPlayers.push(data);
-    console.log(data);
     client.emit('messages', data +' added ');
+    console.log("Player Array ", currentPlayers);
   });
 
   //listens to ready event from each player
@@ -53,11 +55,14 @@ io.on('connection', function (client) {
     //increases readyCounter each time a player transmit event
     readyCounter++;
 
+    console.log("Players Ready #" + readyCounter + " " + name);
     //if readyCounter is equal to # of players, pass currentPlayers
     //to gameLogic to start game
     if(readyCounter === currentPlayers.length){
       currentGame = new gameLogic.GameState(currentPlayers);
       client.emit('game-state-ready', currentGame);
+      console.log("teamReady");
+      console.log(currentGame);
     } else {
       client.emit('game-state-notReady', 'Not Ready' );
     }
@@ -110,7 +115,8 @@ io.on('connection', function (client) {
       gameLogic.finishQuest(currentGame);
 
       //sends 
-      client.emit('game-state', result)
+      client.emit('quest-game', result)
+      client.emit('game-state', game)
 
       //resets questVoteCounter to 0
       questVoteCounter = 0;
@@ -121,12 +127,12 @@ io.on('connection', function (client) {
 
   client.on('confirmQuestMembers', function (names) {
     //send playerName and currentGame to gameLogic
-    for(var name in names){
-      questMembers.push(name);
+    for(var i = 0; i < names.length; i++){
+      questMembers.push(names[i]);
     }
 
     //send game state object to client
-    client.emit('game-state-ready', currentGame);
+    client.emit('captain-team-pick', currentGame);
 
   });
 
