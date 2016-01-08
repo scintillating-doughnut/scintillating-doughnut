@@ -119,12 +119,15 @@ var app = angular.module('SD', [])
       $scope.waitingStatus = 'Waiting for players...';
     });
 
+    socket.on('game-state-ready', function(gameStateObject){
+      alert("All players ready! See console for gamestate object");
+      console.log(gamestateObject);
+    })
+
 });
 
   
 
-  //   socket.on('game-state-ready', function(gameStateObject){
-  //     //render views based on the gamestate object that's sent back 
-  //   })
+
   //   socket.on('questSizeReply', function(){
   // });
