@@ -70,10 +70,10 @@ io.on('connection', function (client) {
 
   client.on('teamPlayerVote', function (data) {
     //increase teamVoteCounter for every vote that I get
-    teamVoteCounter++
+    teamVoteCounter++;
     
     //send each playerVote to gameLogic with the currentGame
-    gameLogic.setTeamVote(currentGame, data.name, data.teamVote)
+    gameLogic.setTeamVote(currentGame, data.name, data.teamVote);
 
     //this will happen when each player has voted
     if(teamVoteCounter===currentPlayers.length){
@@ -108,15 +108,15 @@ io.on('connection', function (client) {
     //increase quest vote 
     questVoteCounter++;
 
-    gameLogic.setQuestVote(currentGame, data.name, data.questVote)
+    gameLogic.setQuestVote(currentGame, data.name, data.questVote);
     
     if(questVoteCounter === currentGame.questSize){
       var result = gameLogic.questVoteOutcome(currentGame);
       gameLogic.finishQuest(currentGame);
 
       //sends 
-      io.emit('quest-game', result)
-      io.emit('game-state', game)
+      io.emit('quest-game', result);
+      io.emit('game-state', game);
 
       //resets questVoteCounter to 0
       questVoteCounter = 0;
@@ -131,16 +131,22 @@ io.on('connection', function (client) {
       questMembers.push(names[i]);
     }
 
+    /////////////////////////////////////////////////
+    //// WHY NOT JUST SET questMembers to names /////
+    /////////////////////////////////////////////////
+    ////////// ALSO, UPDATE CURRENTGAME /////////////
+    confirmQuestMembers(currentGame, names);
+
     //send game state object to client
     io.emit('captain-team-pick', currentGame);
 
   });
 
-  // client.on('questSize', function (names) {
-  //   //ask gameLogic for number of quest members needed
-  //   currentQuestSize = gameLogic.peopleNeededForQuest(currentGame);
-  //   client.emit('questSizeReply', size);
-  // });
+  client.on('questSize', function (names) {
+    //ask gameLogic for number of quest members needed
+    currentQuestSize = gameLogic.peopleNeededForQuest(currentGame);
+    client.emit('questSizeReply', size);
+  });
 
 
 });

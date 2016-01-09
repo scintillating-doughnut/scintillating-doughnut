@@ -7,22 +7,31 @@
     <script src="https://cdn.socket.io/socket.io-1.4.1.min.js"></script>
     <script src="controllers/MainController.js"></script>
 
-    <!-- 
+    
     <script src="services/services.js"></script>
     <script src="app.js"></script>
-     -->
+    
 
     <link rel="stylesheet" type="text/css" href="styles.css" title="Default stylesheet"/>
   </head>
-  <body ng-app='SD' ng-controller="gameCtrl"  ng-keydown="keyPress($event)">
+  <body ng-app='SD' ng-controller="gameCtrl">
 
-    <div ng-include='"views/EnterPlayerView.html"'></div>
+    <!-- <div ng-include='"views/EnterPlayerView.html"'></div> -->
+
+    <div class="EnterPlayer">
+      <form ng-submit="enterPlayerName()" style="float:left">
+        <input type="text" ng-model="nameInput" placeholder="Enter Player Name">
+      </form>
+      <button ng-click="ready()" style="float:left;">Ready</button>
+      You are: {{playerName}}
+    </div>
+
     
     <div ng-include='"views/gameBoardView.html"'></div>
 
     <div ng-include='"views/userInputView.html"'></div>
 
-    <div ng-include='"views/rosterView.html"'></div>
+    <div ng-include='"views/rosterView.html"' ng-if="showRoster"></div>
 
   </body>
 </html>
