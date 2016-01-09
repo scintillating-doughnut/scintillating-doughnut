@@ -14,6 +14,7 @@ var app = angular.module('SD', [])
     $scope.gameStatus = '';
     $scope.gameState = {players: []};
     $scope.showRoster = false;
+    $scope.thisPlayer = {};
 
     // when player enters a name, update the $scope
     $scope.enterPlayerName = function () {
@@ -28,8 +29,8 @@ var app = angular.module('SD', [])
     };
 
     $scope.ready = function () {
-        socket.emit('ready', $scope.playerName);
-        $scope.gameStatus = 'Waiting on players...';
+      socket.emit('ready', $scope.playerName);
+      $scope.gameStatus = 'Waiting on players...';
 
     };
 
@@ -45,7 +46,7 @@ var app = angular.module('SD', [])
         ////////////////////////////////////////
         // send this input playerName to server
         ////////////////////////////////////////
-        socket.emit('teamPlayerVote', {name: $scope.playerName, teamVote:true});
+      socket.emit('teamPlayerVote', {name: $scope.playerName, teamVote:true});
       
     };
 
@@ -61,7 +62,7 @@ var app = angular.module('SD', [])
         ////////////////////////////////////////
         // send this input playerName to server
         ////////////////////////////////////////
-        socket.emit('teamPlayerVote', {name:$scope.playerName, teamVote:false});
+      socket.emit('teamPlayerVote', {name:$scope.playerName, teamVote:false});
       
     };
 
@@ -77,33 +78,46 @@ var app = angular.module('SD', [])
         ////////////////////////////////////////
         // send this input playerName to server
         ////////////////////////////////////////
-        socket.emit('questVote', {name: $scope.playerName, questVote: true});
+      socket.emit('questVote', {name: $scope.playerName, questVote: true});
     };
 
     // when player votes yes for the quest
     $scope.voteNoForQuest = function () {
       // only count the vote if the player hasn't voted for the quest yet
-      if ($scope.thisPlayer.votedForTeam === false ) {
-        $scope.thisPlayer.questVote = false;
+      // if ($scope.thisPlayer.votedForTeam === false ) {
+      //   $scope.thisPlayer.questVote = false;
 
-        // State that the player has voted for quest already
-        $scope.thisPlayer.votedForQuest = true;
+      //   // State that the player has voted for quest already
+      //   $scope.thisPlayer.votedForQuest = true;
 
         ////////////////////////////////////////
         // send this input playerName to server
         ////////////////////////////////////////
-        socket.emit('questVote', {name: $scope.playerName, questVote: false});
-      }
+      socket.emit('questVote', {name: $scope.playerName, questVote: false});
+      // }
     };
 
     // when captain finishes selecting quest team, and confirms
     // TODO
     $scope.confirmQuestMembers = function () {
       // only sends data to server if this player is a captain
-      if ($scope.thisPlayer.isCaptain) {
+      if ($scope.thisPlayer.isLeader) {
 
-        // after setting those player's .onQuest to be true, send the gameState.
-        socket.emit('confirmQuestMembers', $scope.gameState);
+        // after setting those player's .onQuest to be true, find the players who are on a quest, and send it back
+        var questMembers = [];
+
+        for(var i=0; i<$scope.gameState.players[i]; i++) {
+          if($scope.gameState.players[i].onQuest) {
+            questMembers.push($scope.gameState.players[i].name);
+          }
+        }
+
+        // if there are appropriate number of players selected for this quest
+        if(questMembers.length === $scope.gameState.numberOfPlayersOnQuest) {
+          socket.emit('confirmQuestMembers', questMembers);
+        } else {
+          alert('Select ' + $scope.gameState.numberOfPlayersOnQuest + ' players for this quest.');
+        }
       }
     };
     //TODO 
@@ -131,6 +145,22 @@ var app = angular.module('SD', [])
       $timeout(function() {
         $scope.showRoster = true;
       });
+
+      // assign $scope.thisPlayer to the correct player
+      // loop through all players, find the one that matches my name
+      for(var i=0; i<$scope.gameState.players.length; i++) {
+        if($scope.playerName === $scope.gameState.players[i].name) {
+          $scope.thisPlayer = $scope.gameState.players[i];
+          break;
+        }
+      }
+
+      // ask captain to select a team
+      if ($scope.thisPlayer.isLeader) {
+        alert('Use below checkbox to select a team for the quest');
+      } else {
+        alerg('Waiting for captain to select a team');
+      }
     });
 
 });
