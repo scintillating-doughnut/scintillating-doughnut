@@ -293,7 +293,7 @@ module.exports = {
   resetQuestMembers: resetQuestMembers,
   confirmQuestMembers: confirmQuestMembers,
   checkGameOver: checkGameOver
-}
+};
 
 
 //test for number of people in game function
