@@ -28,6 +28,15 @@ var app = angular.module('SD', [])
       console.log($scope.playerName + " should've been sent to server.");
     };
 
+    $scope.updateMyself = function (gameObject) {
+      for (var i = 0; i<gameObject.players.length; i++) {
+        if(gameObject.players[i].name === $scope.playerName) {
+          $scope.thisPlayer = gameObject.players[i];
+          break;
+        }
+      }
+    };
+
     $scope.ready = function () {
       socket.emit('ready', $scope.playerName);
       $scope.gameStatus = 'Waiting on players...';
@@ -106,11 +115,12 @@ var app = angular.module('SD', [])
         // after setting those player's .onQuest to be true, find the players who are on a quest, and send it back
         var questMembers = [];
 
-        for(var i=0; i<$scope.gameState.players[i]; i++) {
+        for(var i=0; i<$scope.gameState.players.length; i++) {
           if($scope.gameState.players[i].onQuest) {
             questMembers.push($scope.gameState.players[i].name);
           }
         }
+        console.log(questMembers);
 
         // if there are appropriate number of players selected for this quest
         if(questMembers.length === $scope.gameState.numberOfPlayersOnQuest) {
@@ -135,7 +145,7 @@ var app = angular.module('SD', [])
       $scope.waitingStatus = 'Waiting for players...';
     });
 
-    socket.on('game-state-ready', function(gameStateObject){
+    socket.on('game-state-ready', function (gameStateObject){
       alert("All players ready! See console for gamestate object");
       console.log(gameStateObject);
       // set global gameState with incoming gameStateobject
@@ -148,18 +158,49 @@ var app = angular.module('SD', [])
 
       // assign $scope.thisPlayer to the correct player
       // loop through all players, find the one that matches my name
-      for(var i=0; i<$scope.gameState.players.length; i++) {
-        if($scope.playerName === $scope.gameState.players[i].name) {
-          $scope.thisPlayer = $scope.gameState.players[i];
-          break;
-        }
-      }
+      $scope.updateMyself($scope.gameState);
 
       // ask captain to select a team
       if ($scope.thisPlayer.isLeader) {
         alert('Use below checkbox to select a team for the quest');
       } else {
-        alerg('Waiting for captain to select a team');
+        alert('Waiting for captain to select a team');
+      }
+    });
+
+    // after captain selects a team, update everyone's roster, also ask player to vote on it
+    socket.on('captain-team-pick', function (gameStateObject) {
+      console.log('captain selected team');
+      $scope.gameState = gameStateObject;
+
+      // Display voting options
+      $scope.gameState.votingForTeam = true;
+
+      // Work around to update roster, due to ng-repeat one-time binding characteristic
+      $timeout(function() {
+        $scope.showRoster = true;
+      });
+    });
+
+    // if all voting are in, and the team passes, lets go on a quest
+    socket.on('start-quest', function (gameStateObject) {
+      console.log('team voting complete, going on a quest');
+      $scope.gameState = gameStateObject;
+      $scope.updateMyself($scope.gameState);
+    });
+
+    socket.on('team-vote-failed', function (gameStateObject) {
+      console.log('team voting complete, failed, not going on a quest');
+      $scope.gameState = gameStateObject;
+      $scope.updateMyself($scope.gameState);
+    });
+
+    socket.on('game-over', function (gameStateObject) {
+      $scope.gameState = gameStateObject;
+      if ($scope.gameState.winner) {
+        console.log('Good team wins!');
+      } else {
+        console.log('Bad team wins!');
       }
     });
 
