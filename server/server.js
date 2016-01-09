@@ -83,23 +83,27 @@ io.on('connection', function (client) {
 
       //if team vote passes, send quest members to gameLogic
       if(result){
-        gameLogic.confirmQuestMembers(currentGame, questMembers);
+        // start quest
+        io.emit('start-quest', currentGame);
       //if team vote fails, reset quest members and increase
       //vote fails
       } else {
         gameLogic.resetQuestMembers(currentGame);
         questMembers = [];
-        currentGame.teamVoteFails++;
+        // currentGame.teamVoteFails++;
         gameLogic.checkGameOver(currentGame);
+        if (gameLogic.gameOver) {
+          io.emit('game-over', currentGame);
+        } else {
+          io.emit('team-vote-failed', currentGame);
+        }
       }
-      //emit state of current state to object
-      io.emit('game-state', currentGame);
-
+      
       //clear teamVoteCounter to 0 for the next team vote
       teamVoteCounter = 0;
 
     } else {
-      io.emit('game-state', "not ready");
+      // io.emit('game-state', "not ready");
     }
 
   });
@@ -135,18 +139,19 @@ io.on('connection', function (client) {
     //// WHY NOT JUST SET questMembers to names /////
     /////////////////////////////////////////////////
     ////////// ALSO, UPDATE CURRENTGAME /////////////
-    confirmQuestMembers(currentGame, names);
+
+    gameLogic.confirmQuestMembers(currentGame, names);
 
     //send game state object to client
     io.emit('captain-team-pick', currentGame);
 
   });
 
-  client.on('questSize', function (names) {
-    //ask gameLogic for number of quest members needed
-    currentQuestSize = gameLogic.peopleNeededForQuest(currentGame);
-    client.emit('questSizeReply', size);
-  });
+  // client.on('questSize', function (names) {
+  //   //ask gameLogic for number of quest members needed
+    // currentQuestSize = gameLogic.peopleNeededForQuest(currentGame);
+  //   client.emit('questSizeReply', size);
+  // });
 
 
 });

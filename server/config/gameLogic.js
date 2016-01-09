@@ -292,8 +292,9 @@ module.exports = {
   teamVoteOutcome: teamVoteOutcome,
   resetQuestMembers: resetQuestMembers,
   confirmQuestMembers: confirmQuestMembers,
-  checkGameOver: checkGameOver
-}
+  checkGameOver: checkGameOver,
+  setTeamVote: setTeamVote
+};
 
 
 //test for number of people in game function
