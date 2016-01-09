@@ -120,7 +120,7 @@ io.on('connection', function (client) {
 
       //sends 
       io.emit('quest-game', result);
-      io.emit('game-state', game);
+      io.emit('game-state-ready', currentGame);
 
       //resets questVoteCounter to 0
       questVoteCounter = 0;

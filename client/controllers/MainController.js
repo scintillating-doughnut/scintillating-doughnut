@@ -57,6 +57,8 @@ var app = angular.module('SD', [])
         ////////////////////////////////////////
       socket.emit('teamPlayerVote', {name: $scope.playerName, teamVote:true});
       
+      // after voting, hide voting
+      $scope.gameState.votingForTeam = false;
     };
 
     // when player votes no for the team
@@ -73,6 +75,8 @@ var app = angular.module('SD', [])
         ////////////////////////////////////////
       socket.emit('teamPlayerVote', {name:$scope.playerName, teamVote:false});
       
+      // after voting, hide voting
+      $scope.gameState.votingForTeam = false;
     };
 
     // when player votes yes for the quest
@@ -87,7 +91,7 @@ var app = angular.module('SD', [])
         ////////////////////////////////////////
         // send this input playerName to server
         ////////////////////////////////////////
-      socket.emit('questVote', {name: $scope.playerName, questVote: true});
+      socket.emit('teamQuestVote', {name: $scope.playerName, questVote: true});
     };
 
     // when player votes yes for the quest
@@ -187,6 +191,11 @@ var app = angular.module('SD', [])
       console.log('team voting complete, going on a quest');
       $scope.gameState = gameStateObject;
       $scope.updateMyself($scope.gameState);
+
+      // quest started, enable voting for the quest for players who are on the quest
+      if ($scope.thisPlayer.onQuest) {
+        $scope.gameState.votingForQuest = true;
+      }
     });
 
     socket.on('team-vote-failed', function (gameStateObject) {
@@ -201,6 +210,14 @@ var app = angular.module('SD', [])
         console.log('Good team wins!');
       } else {
         console.log('Bad team wins!');
+      }
+    });
+
+    socket.on('quest-game', function (result) {
+      if (result) {
+        alert('Good team won');
+      } else {
+        alert('Bad team won');
       }
     });
 
