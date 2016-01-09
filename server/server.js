@@ -70,10 +70,10 @@ io.on('connection', function (client) {
 
   client.on('teamPlayerVote', function (data) {
     //increase teamVoteCounter for every vote that I get
-    teamVoteCounter++
+    teamVoteCounter++;
     
     //send each playerVote to gameLogic with the currentGame
-    gameLogic.setTeamVote(currentGame, data.name, data.teamVote)
+    gameLogic.setTeamVote(currentGame, data.name, data.teamVote);
 
     //this will happen when each player has voted
     if(teamVoteCounter===currentPlayers.length){
@@ -83,23 +83,27 @@ io.on('connection', function (client) {
 
       //if team vote passes, send quest members to gameLogic
       if(result){
-        gameLogic.confirmQuestMembers(currentGame, questMembers);
+        // start quest
+        io.emit('start-quest', currentGame);
       //if team vote fails, reset quest members and increase
       //vote fails
       } else {
         gameLogic.resetQuestMembers(currentGame);
         questMembers = [];
-        currentGame.teamVoteFails++;
+        // currentGame.teamVoteFails++;
         gameLogic.checkGameOver(currentGame);
+        if (gameLogic.gameOver) {
+          io.emit('game-over', currentGame);
+        } else {
+          io.emit('team-vote-failed', currentGame);
+        }
       }
-      //emit state of current state to object
-      io.emit('game-state', currentGame);
-
+      
       //clear teamVoteCounter to 0 for the next team vote
       teamVoteCounter = 0;
 
     } else {
-      io.emit('game-state', "not ready");
+      // io.emit('game-state', "not ready");
     }
 
   });
@@ -108,15 +112,15 @@ io.on('connection', function (client) {
     //increase quest vote 
     questVoteCounter++;
 
-    gameLogic.setQuestVote(currentGame, data.name, data.questVote)
+    gameLogic.setQuestVote(currentGame, data.name, data.questVote);
     
     if(questVoteCounter === currentGame.questSize){
       var result = gameLogic.questVoteOutcome(currentGame);
       gameLogic.finishQuest(currentGame);
 
       //sends 
-      io.emit('quest-game', result)
-      io.emit('game-state', game)
+      io.emit('quest-game', result);
+      io.emit('game-state', game);
 
       //resets questVoteCounter to 0
       questVoteCounter = 0;
@@ -131,6 +135,13 @@ io.on('connection', function (client) {
       questMembers.push(names[i]);
     }
 
+    /////////////////////////////////////////////////
+    //// WHY NOT JUST SET questMembers to names /////
+    /////////////////////////////////////////////////
+    ////////// ALSO, UPDATE CURRENTGAME /////////////
+
+    gameLogic.confirmQuestMembers(currentGame, names);
+
     //send game state object to client
     io.emit('captain-team-pick', currentGame);
 
@@ -138,7 +149,7 @@ io.on('connection', function (client) {
 
   // client.on('questSize', function (names) {
   //   //ask gameLogic for number of quest members needed
-  //   currentQuestSize = gameLogic.peopleNeededForQuest(currentGame);
+    // currentQuestSize = gameLogic.peopleNeededForQuest(currentGame);
   //   client.emit('questSizeReply', size);
   // });
 
