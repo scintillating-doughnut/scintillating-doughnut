@@ -17,7 +17,7 @@ angular.module('SD.routes', [])
     .state('page', {
       url: 'joinGame/page',
       // parent: 'joinGame',
-      templateUrl: 'templates/page.html',
+      templateUrl: 'templates/mainView.html',
       controller: 'gameCtrl'
     })
 

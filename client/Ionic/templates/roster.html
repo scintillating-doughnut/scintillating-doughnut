@@ -1,0 +1,6 @@
+<div ng-include='"templates/gameBoard.html"'></div>
+<ion-list>
+  <ion-item ng-repeat='player in gameState.players'>{{ player.name }}  
+  <input type="checkbox" ng-model="player.onQuest"> On team: {{player.onQuest}} ||
+    Team Vote: {{player.teamVote}}</ion-item>
+</ion-list>
