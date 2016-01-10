@@ -1,0 +1,9 @@
+<ion-view title="Breakfast Revolution">
+    <ion-content overflow-scroll="true" padding="true" class="has-header">
+        <div ng-include='"templates/gameBoard.html"'></div>
+        <ion-list>
+            <ion-item ng-repeat='player in gameState.players'>{{ player.name }}</ion-item>
+
+        </ion-list>
+    </ion-content>
+</ion-view>
