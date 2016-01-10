@@ -25,6 +25,11 @@
       <button ng-click="ready()" style="float:left;">Ready</button>
       You are: {{playerName}}
     </div>
+    
+    <div style='float:left;clear: both; border:2px solid black; margin-top:10px' ngIf='showRoster'class='specialpowers'>Your character is: {{thisPlayer.role}}. You are: {{thisPlayer.team}}. You can see:</div>
+    <div ng-repeat='see in thisPlayer.specialAbility'>
+      <li>{{see}}</li>
+    </div>
 
     
     <div ng-include='"views/gameBoardView.html"'></div>
