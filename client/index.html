@@ -25,6 +25,17 @@
       <button ng-click="ready()" style="float:left;" ng-show="!playerReadied && playerJoined">Ready</button>
       You are: {{playerName}}
     </div>
+    
+
+    <button ng-click="toggleRole()" ng-if= 'showRoleToggle' style="float:left;clear:both;">Show/Hide Role</button>
+    <div style='float:left;clear: both; border:2px solid black; margin-top:10px' ng-if='showRoster' class='specialpowers'>
+    <p>Your character is: <span style='font-weight:bold;'>{{thisPlayer.role}}</span></p>
+    <p>You are on the <span style='font-weight:bold;'>{{thisPlayer.team}}</span> side. 
+    <p>You can see:</p>
+    <div ng-repeat='see in thisPlayer.specialAbility'>
+      <li>{{see}}</li>
+    </div>
+    </div>
 
     
     <div ng-include='"views/gameBoardView.html"'></div>
