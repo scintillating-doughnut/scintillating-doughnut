@@ -14,6 +14,8 @@ var app = angular.module('SD', [])
     $scope.gameStatus = '';
     $scope.gameState = {players: []};
     $scope.showRoster = false;
+    $scope.showSpecialPowers = false;
+    $scope.showRoleToggle = false;
     $scope.thisPlayer = {};
 
     // when player enters a name, update the $scope
@@ -28,6 +30,7 @@ var app = angular.module('SD', [])
       console.log($scope.playerName + " should've been sent to server.");
     };
 
+    // Helper function to update this.player gamestates when server sends back a new gamestate. 
     $scope.updateMyself = function (gameObject) {
       for (var i = 0; i<gameObject.players.length; i++) {
         if(gameObject.players[i].name === $scope.playerName) {
@@ -36,6 +39,14 @@ var app = angular.module('SD', [])
         }
       }
     };
+
+    $scope.toggleRole = function () {
+      if ($scope.showRoster) { 
+        $scope.showRoster = false;
+      } else {
+        $scope.showRoster = true;
+      }
+    }
 
     $scope.ready = function () {
       socket.emit('ready', $scope.playerName);
@@ -158,6 +169,8 @@ var app = angular.module('SD', [])
       // Work around to update roster, due to ng-repeat one-time binding characteristic
       $timeout(function() {
         $scope.showRoster = true;
+        $scope.showSpecialPowers = true;
+        $scope.showRoleToggle = true;
       });
 
       // assign $scope.thisPlayer to the correct player
