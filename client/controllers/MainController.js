@@ -15,11 +15,16 @@ var app = angular.module('SD', [])
     $scope.gameState = {players: []};
     $scope.showRoster = false;
     $scope.thisPlayer = {};
+    $scope.playerJoined = false;
+    $scope.playerReadied = false;
 
     // when player enters a name, update the $scope
     $scope.enterPlayerName = function () {
       $scope.playerName = $scope.nameInput;
       $scope.nameInput = '';
+
+      // Hide name inputField
+      $scope.playerJoined = true;
 
       ////////////////////////////////////////
       // send this input playerName to server
@@ -40,6 +45,9 @@ var app = angular.module('SD', [])
     $scope.ready = function () {
       socket.emit('ready', $scope.playerName);
       $scope.gameStatus = 'Waiting on players...';
+
+      // hide ready button
+      $scope.playerReadied = true;
 
     };
 
