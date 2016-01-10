@@ -46,6 +46,8 @@ io.on('connection', function (client) {
     console.log('player name received: ', data);
 
     currentPlayers.push(data);
+    console.log("Players", currentPlayers);
+    console.log("Game Object", currentGame);
     io.emit('messages', data +' added ');
     console.log("Player Array ", currentPlayers);
   });
