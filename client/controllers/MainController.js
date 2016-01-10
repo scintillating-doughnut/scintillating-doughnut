@@ -106,7 +106,7 @@ var app = angular.module('SD', [])
         ////////////////////////////////////////
         // send this input playerName to server
         ////////////////////////////////////////
-      socket.emit('questVote', {name: $scope.playerName, questVote: false});
+      socket.emit('teamQuestVote', {name: $scope.playerName, questVote: false});
       // }
     };
 
@@ -190,12 +190,17 @@ var app = angular.module('SD', [])
     socket.on('start-quest', function (gameStateObject) {
       console.log('team voting complete, going on a quest');
       $scope.gameState = gameStateObject;
+      // debugger;
       $scope.updateMyself($scope.gameState);
 
       // quest started, enable voting for the quest for players who are on the quest
       if ($scope.thisPlayer.onQuest) {
         $scope.gameState.votingForQuest = true;
       }
+
+      $timeout(function() {
+        $scope.showRoster = true;
+      });
     });
 
     socket.on('team-vote-failed', function (gameStateObject) {
@@ -215,9 +220,9 @@ var app = angular.module('SD', [])
 
     socket.on('quest-game', function (result) {
       if (result) {
-        alert('Good team won');
+        alert('This quest passed');
       } else {
-        alert('Bad team won');
+        alert('This quest failed');
       }
     });
 

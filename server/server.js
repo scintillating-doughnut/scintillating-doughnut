@@ -114,13 +114,18 @@ io.on('connection', function (client) {
 
     gameLogic.setQuestVote(currentGame, data.name, data.questVote);
     
-    if(questVoteCounter === currentGame.questSize){
+    if(questVoteCounter === currentGame.numberOfPlayersOnQuest){
       var result = gameLogic.questVoteOutcome(currentGame);
       gameLogic.finishQuest(currentGame);
 
-      //sends 
-      io.emit('quest-game', result);
-      io.emit('game-state-ready', currentGame);
+      // check if game is over after computing quest result
+      if (currentGame.gameOver) {
+        io.emit('game-over', currentGame);
+      } else {
+        //sends 
+        io.emit('quest-game', result);
+        io.emit('game-state-ready', currentGame);
+      }
 
       //resets questVoteCounter to 0
       questVoteCounter = 0;

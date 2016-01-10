@@ -293,7 +293,12 @@ module.exports = {
   resetQuestMembers: resetQuestMembers,
   confirmQuestMembers: confirmQuestMembers,
   checkGameOver: checkGameOver,
-  setTeamVote: setTeamVote
+  setTeamVote: setTeamVote,
+  setQuestVote: setQuestVote,
+  questVoteOutcome: questVoteOutcome,
+  finishQuest: finishQuest,
+  ladyCheck: ladyCheck,
+  peopleNeededForQuest: peopleNeededForQuest
 };
 
 
