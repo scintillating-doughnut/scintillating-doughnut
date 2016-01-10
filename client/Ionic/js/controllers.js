@@ -3,11 +3,20 @@ var socket = io();
 //dedeoop
 //prune
 angular.module('SD.controllers', [])
-  .controller('gameCtrl', function ($scope, $window, $location, $state, GameService) {
+  .controller('gameCtrl', function ($scope, $window,$ionicHistory, $location, $state, GameService) {
 
     // initialize the controller
     $scope.refresh = function () {
+      console.log('refreshing');
       $scope.gameState = GameService.gameState;
+      for(var i = 0 ; i < GameService.gameState.numberOfPlayers; i++){
+        if(GameService.gameState.players[i].name === GameService.playerName){
+          GameService.myPlayer = GameService.gameState.players[i];
+          $scope.myPlayer = GameService.gameState.players[i];
+        }
+      }
+      $scope.myPlayer = GameService.myPlayer;
+      return GameService.myPlayer;
     };
 
     // when player enters a name, update the $scope
@@ -79,11 +88,11 @@ angular.module('SD.controllers', [])
     // when player votes yes for the quest
     $scope.voteNoForQuest = function () {
       // only count the vote if the player hasn't voted for the quest yet
-      if ($scope.thisPlayer.votedForTeam === false ) {
-        $scope.thisPlayer.questVote = false;
+      if (GameService.myPlayer.votedForTeam === false ) {
+        GameService.myPlayer.questVote = false;
 
         // State that the player has voted for quest already
-        $scope.thisPlayer.votedForQuest = true;
+        GameService.myPlayer.votedForQuest = true;
 
         ////////////////////////////////////////
         // send this input playerName to server
@@ -96,17 +105,17 @@ angular.module('SD.controllers', [])
     // TODO
     $scope.confirmQuestMembers = function () {
       // only sends data to server if this player is a captain
-      if ($scope.thisPlayer.isCaptain) {
+      if (GameService.myPlayer.isCaptain) {
 
         // after setting those player's .onQuest to be true, send the gameState.
-        socket.emit('confirmQuestMembers', $scope.gameState);
+        socket.emit('confirmQuestMembers', GameService.gameState);
       }
     };
     //TODO 
     $scope.startQuestMemberSelection= function () {
       // only sends data to server if this player is a captain
         // after setting those player's .onQuest to be true, send the gameState.
-        socket.emit('questSize', $scope.gameState);
+        socket.emit('questSize', GameService.gameState);
       
     };
     ////////////////////
@@ -118,9 +127,16 @@ angular.module('SD.controllers', [])
     });
 
     socket.on('game-state-ready', function(gameStateObject){
-      alert("All players ready! See console for gamestate object");
       GameService.gameState = gameStateObject;
-      $state.go('page');
+      $state.go('playerView');
+      $scope.refresh();
+      setTimeout(function(){
+        $state.go('mainView');
+        $scope.refresh();
+        $ionicHistory.clearHistory();
+      },2000);
+      // $state.go('mainView');
+      // $scope.refresh();
 
       console.log(gameStateObject);
     });

@@ -4,6 +4,7 @@ angular.module('SD.services', [])
   this.playerName = '';
   this.gameState = {};
   this.gameStatus = '';
+  this.myPlayer={};
 
 }]);
 

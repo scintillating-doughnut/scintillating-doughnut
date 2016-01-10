@@ -14,10 +14,14 @@ angular.module('SD.routes', [])
       controller: 'gameCtrl'
     })
 
-    .state('page', {
-      url: 'joinGame/page',
-      // parent: 'joinGame',
+    .state('mainView', {
+      url: '/mainView',
       templateUrl: 'templates/mainView.html',
+      controller: 'gameCtrl'
+    })
+    .state('playerView', {
+      url: '/playerView',
+      templateUrl: 'templates/playerView.html',
       controller: 'gameCtrl'
     })
 

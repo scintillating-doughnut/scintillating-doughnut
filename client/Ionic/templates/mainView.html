@@ -1,5 +1,6 @@
 <ion-view title="Breakfast Revolution">
-    <ion-content overflow-scroll="true" padding="true" class="has-header">
+<div ng-include='"templates/gameBoard.html"'></div>
+    <ion-content id='main' overflow-scroll="true" padding="true" class="has-header" ng-init="myPlayer = refresh();">
         <div ng-include='"templates/teamVote.html"'></div>
         <div ng-include='"templates/questVote.html"'></div>
         <div ng-include='"templates/roster.html"'></div>
