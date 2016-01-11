@@ -10,6 +10,8 @@ var GameState = function (players) {
   this.badWins = 0;
   this.teamVoteFails = 1;
   this.winner = null;
+  this.votingForTeam = false;
+  this.votingForQuest = false;
   this.numberOfPlayers = players.length;
   this.availableRoles = randomRoles(this.numberOfPlayers);
   this.questSet = {1 : null, 2 : null, 3 : null, 4 : null, 5 : null};
@@ -18,6 +20,9 @@ var GameState = function (players) {
     this.players.push(new CreatePlayer(this.allPlayersNames[i],this.availableRoles[i]));
   }
   assignLeader(this);
+  for (var j = 0; j < this.numberOfPlayers; j++) {
+    this.players[j].specialAbility = specialPowers(this, this.players[j]);
+  }
 };
 
 //ceates new player based on role and name passed in.
@@ -31,12 +36,38 @@ var CreatePlayer = function (playerName, role) {
   this.onQuest = false;
   this.isLady = false;
   this.beenLady = false;
-  this.specialAbility = null;
+  this.specialAbility = [];
+  this.image = getImage(role);
+  this.votedForTeam = false;
+  this.votedForQuest = false;
 };
 
 //assigns team good or bad based on role thats passed in.
+
+// For current/future devs: Oberon is currently not used
+
+/*
+Avalon Name | Breakfast Game Name
+----------------------------------
+Bad:
+
+Assassin      Egg-sassin
+Morgana       Plain Bagel
+Mordred       Chocolate Bacon
+Minion        Sinister Sausage
+
+Good:
+
+Merlin        Scintillating Donut
+Percival      Perceiving Pancakes
+Servant       Cereal
+Servant       Cinnamon Roll
+Servant       Crepe
+Servant       Belgian Waffle
+*/
+
 var assignTeam = function (role) {
-  if (role === 'Assassin' || role === 'Morgona' || role === 'Mordred' || role === 'minion' || role === 'oberon') {
+  if (role === 'Egg-sassin' || role === 'Plain Bagel' || role === 'Chocolate Bacon' || role === 'Sinister Sausage' || role === 'Oberon') {
     return 'bad';
   } else {
     return 'good';
@@ -45,8 +76,8 @@ var assignTeam = function (role) {
 
 //generates random list of roles based on number of players in game.
 var randomRoles = function (numberOfPlayers) {
-  var goodRoles = ['Merlin', 'Percival', 'Servent', 'Servent', 'Servent' , 'Servent'];
-  var badRoles = ['Assassin', 'Morgana', 'Mordred', 'Minion', 'Oberon'];
+  var goodRoles = ['Scintillating Doughnut', 'Perceiving Pancakes' , 'Cereal', 'Cinnamon Roll', 'Crepe' , 'Belgian Waffle'];
+  var badRoles = ['Egg-sassin', 'Plain Bagel', 'Chocolate Bacon', 'Sinister Sausage', 'Oberon'];
   var playerSet = [];
   var randomPlayerSet = [];
   var numBad = Math.ceil(numberOfPlayers/3);
@@ -286,6 +317,89 @@ var peopleNeededForQuest = function (gameInstance) {
   return people;
 };
 
+var isAssassinSuccessful = function (gameInstance, name) {
+  for (var i = 0; i < gameInstance.numberOfPlayers; i++) {
+    if (gameInstance.players[i].name === name) {
+      if(gameInstance.players[i].role === 'Scintillating Doughnut') {
+        return true;
+      }
+    }
+  }
+    return false;
+};
+
+var specialPowers = function (gameInstance, player) {
+  var result = [];
+  var allPlayers = gameInstance.players;
+  var numberOfPlayers = gameInstance.numberOfPlayers;
+  var playerRole = player.role;
+
+    /* This section is the logic to delegate who sees who*/
+    if(playerRole === 'Scintillating Doughnut') {
+      for (var i = 0; i < numberOfPlayers; i++){
+        if(allPlayers[i].team === 'bad' && allPlayers[i].role !== 'Chocolate Bacon') {
+          result.push(allPlayers[i].name);
+        }
+      }
+    }
+    else if (playerRole === 'Perceiving Pancakes') {
+      for(var j = 0; j < numberOfPlayers; j++){
+        if(allPlayers[j].role === 'Scintillating Doughnut' || allPlayers[j].role === 'Plain Bagel') {
+          result.push(allPlayers[j].name);
+        }
+      }
+    }
+    else if (player.team === 'bad') {
+      for (var k = 0; k < numberOfPlayers; k++) {
+        if (allPlayers[k].team === 'bad') {
+          result.push(allPlayers[k].name);
+
+        }
+      }
+    }
+    console.log('name ' , player.name, 'sees: ',result);
+  return result;
+};
+
+//  var goodRoles = ['Scintillating Doughnut', 'Perceiving Pancakes' , 'Cereal', 'Cinnamon Roll', 'Crepe' , 'Belgian Waffle'];
+// var badRoles = ['Egg-sassin', 'Plain Bagel', 'Chocolate Bacon', 'Sinister Sausage', 'Oberon'];
+var getImage = function(role) {
+  if (role === 'Scintillating Doughnut'){
+    return "assets/doughnut.png";
+  }
+  if (role === 'Perceiving Pancakes'){
+    return "assets/pancakes.png";
+  }
+  if (role === 'Cereal'){
+    return "assets/cereal.png";
+  }
+  if (role === 'Cinnamon Roll'){
+    return "assets/cinnamon.png";
+  }
+  if (role === 'Crepe'){
+    return "assets/creepe.png";// This is spelled like this in assets folder
+  }
+  if (role === 'Belgian Waffle'){
+    return "assets/waffle.png";
+  }
+  if (role === 'Egg-sassin'){
+    return "assets/assasin.png";
+  }
+  if (role === 'Plain Bagel'){
+    return "assets/bagel.png";
+  }
+  if (role === 'Chocolate Bacon'){
+    return "assets/bacon.png";
+  }
+  if (role === 'Sinister Sausage'){
+    return "assets/sausage.png";
+  }
+};
+
+
+
+
+
 module.exports = {
   GameState: GameState,
   CreatePlayer: CreatePlayer,
@@ -298,7 +412,10 @@ module.exports = {
   questVoteOutcome: questVoteOutcome,
   finishQuest: finishQuest,
   ladyCheck: ladyCheck,
-  peopleNeededForQuest: peopleNeededForQuest
+  peopleNeededForQuest: peopleNeededForQuest,
+  isAssassinSuccessful: isAssassinSuccessful,
+  getImage: getImage
+
 };
 
 
@@ -340,4 +457,7 @@ module.exports = {
 // console.log(ladyCheck(test, 'kevin'));
 // console.log(questVoteOutcome(test));
 // console.log(finishQuest(test));
+
+// var test = new GameState(['six','dakota','kevin','kris','justin','hacker','seven']);
+// console.log(test);
 

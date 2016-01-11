@@ -1,0 +1,8 @@
+
+<ion-list ng-init='refresh()'>
+  <ion-item ng-repeat='player in gameState.players'>{{ player.name }}  
+  <input type="checkbox" ng-model="player.onQuest"> On team: {{player.onQuest}} ||
+    Team Vote: {{player.teamVote}}</ion-item>
+</ion-list>
+
+<button ng-show='myPlayer.isLeader' ng-click="confirmQuestMembers()">Confirm Team Selection</button>

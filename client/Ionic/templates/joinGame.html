@@ -1,0 +1,15 @@
+<ion-view title="Breakfast Revolution">
+    <ion-content overflow-scroll="true" id='join' padding="true" class="has-header">
+        <form class="list" ng-hide='showMe' ng-submit="enterPlayerName(nameInput); showMe=true;">
+            <label class="item item-input" name="userName">
+                <span class="input-label">Name</span>
+                <input type="text" ng-model="nameInput" required>
+            </label>
+            <input type='submit' value='Join The Revolution' class="button button-stable button-block" >
+        </form>
+
+        <div ng-show='showMe'>Welcome to the Revolution {{ playerName }}<br>
+        Waiting for all players to ready up</div>
+        <button id='ready' ng-disabled='disable' ng-show='showMe' class="button button-stable button-block" ng-click="ready(); disable=true">Ready</button>
+    </ion-content>
+</ion-view>
