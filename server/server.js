@@ -24,7 +24,7 @@ var morganLogger = function (app, express) {
  app.use(morgan('dev'));
  app.use(bodyParser.urlencoded({extended: true}));
  app.use(bodyParser.json());
- app.use(express.static('client'));
+ app.use(express.static('client/Ionic'));
 };
 
 morganLogger(app, express);
@@ -88,12 +88,20 @@ io.on('connection', function (client) {
 
       //if team vote passes, send quest members to gameLogic
       if(result){
-        // start quest
-        io.emit('start-quest', currentGame);
+
+        gameLogic.confirmQuestMembers(currentGame, questMembers);
+        console.log('questpassed')
+        io.emit('team-accepted', currentGame);
+
       //if team vote fails, reset quest members and increase
       //vote fails
       } else {
         gameLogic.resetQuestMembers(currentGame);
+        questMembers = [];
+        currentGame.teamVoteFails++;
+        gameLogic.rotateLeader(currentGame);
+
+
         //questMembers = [];
         gameLogic.checkGameOver(currentGame);
         if (gameLogic.gameOver) {
@@ -101,6 +109,7 @@ io.on('connection', function (client) {
         } else {
           io.emit('team-vote-failed', currentGame);
         }
+
       }
 
       //clear teamVoteCounter to 0 for the next team vote
@@ -138,22 +147,16 @@ io.on('connection', function (client) {
 
   });
 
-  client.on('confirmQuestMembers', function (names) {
-    //send playerName and currentGame to gameLogic
-    // for(var i = 0; i < names.length; i++){
-    //   questMembers.push(names[i]);
-    // }
-    //questMembers = names.slice();
+  client.on('confirmQuestMembers', function (data) {
 
-    /////////////////////////////////////////////////
-    //// WHY NOT JUST SET questMembers to names /////
-    /////////////////////////////////////////////////
-    ////////// ALSO, UPDATE CURRENTGAME /////////////
-
-    gameLogic.confirmQuestMembers(currentGame, names);
-
+  // game.confirmQuestMembers(data.gameState, data.names);
+  //   //send playerName and currentGame to gameLogic
+  //   for(var i = 0; i < names.length; i++){
+  //     questMembers.push(names[i]);
+  //   }
+    console.log('confirm',data);
     //send game state object to client
-    io.emit('captain-team-pick', currentGame);
+    io.emit('leader-selected-team', data);
 
   });
 

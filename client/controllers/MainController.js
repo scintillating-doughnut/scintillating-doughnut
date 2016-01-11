@@ -1,3 +1,19 @@
+Skip to content
+This repository  
+Search
+Pull requests
+Issues
+Gist
+ @Dakota-Peel
+ Unwatch 4
+  Star 0
+ Fork 4 scintillating-doughnut/scintillating-doughnut
+ Code  Issues 7  Pull requests 1  Wiki  Pulse  Graphs  Settings
+Branch: master Find file Copy pathscintillating-doughnut/client/controllers/MainController.js
+325bb18  2 hours ago
+@jshaw22 jshaw22 Merge branch 'master' of https://github.com/scintillating-doughnut/sc…
+3 contributors @kweng2 @jshaw22 @krisalbert
+RawBlameHistory     257 lines (207 sloc)  8.35 KB
 
 var socket = io();
 //shrinkwrap
@@ -254,3 +270,5 @@ var app = angular.module('SD', [])
 
   //   socket.on('questSizeReply', function(){
   // });
+Status API Training Shop Blog About Pricing
+© 2016 GitHub, Inc. Terms Privacy Security Contact Help
