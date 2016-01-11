@@ -50,23 +50,15 @@ angular.module('SD.controllers', [])
     // when captain finishes selecting quest team, and confirms
     // TODO
     $scope.confirmQuestMembers = function () {
-      console.log('confirm');
-      // only sends data to server if this player is a captain
-      if (GameService.myPlayer.isLeader) {
-        console.log('leader sleected team');
-
-        // after setting those player's .onQuest to be true, send the gameState.
-        GameService.gameState.votingForTeam =true;
-        socket.emit('confirmQuestMembers', GameService.gameState);
-      }
+      GameService.confirmQuestMembers();
     };
     //TODO 
-    $scope.startQuestMemberSelection= function () {
-      // only sends data to server if this player is a captain
-        // after setting those player's .onQuest to be true, send the gameState.
-        socket.emit('questSize', GameService.gameState);
+    // $scope.startQuestMemberSelection= function () {
+    //   // only sends data to server if this player is a captain
+    //     // after setting those player's .onQuest to be true, send the gameState.
+    //     socket.emit('questSize', GameService.gameState);
       
-    };
+    // };
     ////////////////////
     /* LISTENERS FOR BACKEND EVENTS */
     ////////////////////
@@ -78,29 +70,42 @@ angular.module('SD.controllers', [])
     socket.on('game-state-ready', function(gameStateObject){
       GameService.gameState = gameStateObject;
       $state.go('playerView');
-      $scope.refresh();
       setTimeout(function(){
         $state.go('mainView');
-        $scope.refresh();
         $ionicHistory.clearHistory();
-      },2000);
-      // $state.go('mainView');
-      // $scope.refresh();
+      },1000);
 
       console.log(gameStateObject);
+
+      GameService.updateMyself(GameService.gameState);
+
+      if(GameService.myPlayer.isLeader) {
+        alert('You are the captain, pick a team');
+      }
     });
 
-    socket.on('team-accepted', function(data){
-      GameService.gameState = data;
-      console.log('quest starting');
-
-    });
-
-    socket.on('leader-selected-team', function(data){
-      GameService.gameState = data;
+    socket.on('next-quest', function (gameStateObject) {
+      GameService.gameState = gameStateObject;
       $scope.refresh();
-      console.log('team selected should update view');
-    })
+    });
+
+    socket.on('leader-selected-team', function (data){
+      $scope.$apply(function(){
+        GameService.gameState = data;
+        GameService.gameState.votingForTeam = true;
+        $scope.refresh();
+      });
+    });
+
+    socket.on('start-quest', function (data) {
+      data.votingForTeam = false;
+      data.votingForQuest = true;
+      $scope.$apply(function() {
+        GameService.gameState = data;
+        $scope.refresh();
+      });
+      debugger;
+    });
 
 });
 

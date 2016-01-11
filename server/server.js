@@ -16,7 +16,7 @@ var currentGame;
 var teamVoteCounter = 0;
 var questVoteCounter = 0;
 var currentQuestSize = 0;
-//var questMembers = [];
+var questMembers = [];
 
 //this function logs all the get and post requests made to
 //the server.
@@ -43,13 +43,13 @@ io.on('connection', function (client) {
   //on hearing enterPlayerName event, push player name
   //to array
   client.on('enterPlayerName', function (data) {
-    console.log('player name received: ', data);
+    // console.log('player name received: ', data);
 
     currentPlayers.push(data);
-    console.log("Players", currentPlayers);
-    console.log("Game Object", currentGame);
+    // console.log("Players", currentPlayers);
+    // console.log("Game Object", currentGame);
     io.emit('messages', data +' added ');
-    io.emit('game-players', currentPlayers);
+    // io.emit('game-players', currentPlayers);
     console.log("Player Array ", currentPlayers);
   });
 
@@ -63,11 +63,10 @@ io.on('connection', function (client) {
     //to gameLogic to start game
     if(readyCounter === currentPlayers.length){
       currentGame = new gameLogic.GameState(currentPlayers);
-      currentPlayers = [];
-      readyCounter = 0;
+      // currentPlayers = [];
+      // readyCounter = 0;
       io.emit('game-state-ready', currentGame);
-      console.log("teamReady");
-      console.log(currentGame);
+
     } else {
       io.emit('game-state-notReady', 'Not Ready' );
     }
@@ -88,10 +87,7 @@ io.on('connection', function (client) {
 
       //if team vote passes, send quest members to gameLogic
       if(result){
-
-        gameLogic.confirmQuestMembers(currentGame, questMembers);
-        console.log('questpassed')
-        io.emit('team-accepted', currentGame);
+        io.emit('start-quest', currentGame);
 
       //if team vote fails, reset quest members and increase
       //vote fails
@@ -101,8 +97,6 @@ io.on('connection', function (client) {
         currentGame.teamVoteFails++;
         gameLogic.rotateLeader(currentGame);
 
-
-        //questMembers = [];
         gameLogic.checkGameOver(currentGame);
         if (gameLogic.gameOver) {
           io.emit('game-over', currentGame);
@@ -111,7 +105,6 @@ io.on('connection', function (client) {
         }
 
       }
-
       //clear teamVoteCounter to 0 for the next team vote
       teamVoteCounter = 0;
 
@@ -137,26 +130,27 @@ io.on('connection', function (client) {
       } else {
         //sends
         io.emit('quest-game', result);
-        io.emit('game-state-ready', currentGame);
+        io.emit('next-quest', currentGame);
       }
 
       //resets questVoteCounter to 0
       questVoteCounter = 0;
+      gameLogic.rotateLeader(currentGame);
     }
 
 
   });
 
-  client.on('confirmQuestMembers', function (data) {
+  client.on('confirmQuestMembers', function (names) {
 
-  // game.confirmQuestMembers(data.gameState, data.names);
-  //   //send playerName and currentGame to gameLogic
-  //   for(var i = 0; i < names.length; i++){
-  //     questMembers.push(names[i]);
-  //   }
-    console.log('confirm',data);
+    //send playerName and currentGame to gameLogic
+    for(var i = 0; i < names.length; i++){
+      questMembers.push(names[i]);
+    }
+    gameLogic.confirmQuestMembers(currentGame, names);
+
     //send game state object to client
-    io.emit('leader-selected-team', data);
+    io.emit('leader-selected-team', currentGame);
 
   });
 
@@ -169,7 +163,7 @@ io.on('connection', function (client) {
 
 });
 
-// app.get('/api/stats', gameController.allStats);
+app.get('/api/stats', gameController.allStats);
 
-// app.post('api/stats', gameController.addGameStats);
+app.post('api/stats', gameController.storeFinishedGameStats);
 
