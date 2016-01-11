@@ -130,7 +130,7 @@ io.on('connection', function (client) {
       } else {
         //sends
         io.emit('quest-game', result);
-        io.emit('game-state-ready', currentGame);
+        io.emit('next-quest', currentGame);
       }
 
       //resets questVoteCounter to 0
@@ -150,7 +150,7 @@ io.on('connection', function (client) {
     gameLogic.confirmQuestMembers(currentGame, names);
 
     //send game state object to client
-    io.emit('captain-team-pick', currentGame);
+    io.emit('leader-selected-team', currentGame);
 
   });
 

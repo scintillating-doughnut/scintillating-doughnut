@@ -1,10 +1,10 @@
 var mongoose = require('mongoose');
 
-var StatsChema = new mongoose.Schema({
+var StatsSchema = new mongoose.Schema({
   sweetWon: Boolean,
   numPlayers: Number,
   gameTime: Number,
   numRoundsPlayed: Number
 });
 
-module.exports = mongoose.models('Stats', StatsSchema);
+module.exports = mongoose.model('Stats', StatsSchema);

@@ -42,7 +42,7 @@ angular.module('SD.services', [])
 
   this.voteYesForQuest = function () {
     if (this.myPlayer.votedForQuest === false ) {
-      socket.emit('questVote', {name: this.playerName, questVote: true});
+      socket.emit('teamQuestVote', {name: this.playerName, questVote: true});
       this.myPlayer.votedForQuest = true;
     }
   };
@@ -68,7 +68,6 @@ angular.module('SD.services', [])
 
       if (questMembers.length === this.gameState.numberOfPlayersOnQuest) {
         socket.emit('confirmQuestMembers', questMembers);
-        this.gameState.votingForTeam = true;
       } else {
         alert('Select ' + this.gameState.numberOfPlayersOnQuest + ' players for this quest');
       }
@@ -138,23 +137,23 @@ angular.module('SD.services', [])
   });
 
   // if all voting are in, and the team passes, lets go on a quest
-  socket.on('start-quest', function (gameStateObject) {
-    // console.log('team voting complete, going on a quest');
-    this.gameState = gameStateObject;
-    // debugger;
-    this.updateMyself(this.gameState);
+  // socket.on('start-quest', function (gameStateObject) {
+  //   console.log('team voting complete, going on a quest');
+  //   this.gameState = gameStateObject;
+  //   // debugger;
+  //   this.updateMyself(this.gameState);
 
-    // may need routing depending
+  //   // may need routing depending
 
-    // quest started, enable voting for the quest for players who are on the quest
-    // if ($scope.thisPlayer.onQuest) {
-    //   $scope.gameState.votingForQuest = true;
-    // }
+  //   // quest started, enable voting for the quest for players who are on the quest
+  //   // if ($scope.thisPlayer.onQuest) {
+  //   //   $scope.gameState.votingForQuest = true;
+  //   // }
 
-    // $timeout(function() {
-    //   $scope.showRoster = true;
-    // });
-  });
+  //   // $timeout(function() {
+  //   //   $scope.showRoster = true;
+  //   // });
+  // });
 
   socket.on('team-vote-failed', function (gameStateObject) {
     console.log('team voting complete, failed, not going on a quest');
@@ -205,7 +204,7 @@ angular.module('SD.services', [])
     });
   };
 
-  this.getAll();
+  // this.getAll();
 
 }]);
 

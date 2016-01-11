@@ -73,7 +73,7 @@ angular.module('SD.controllers', [])
       setTimeout(function(){
         $state.go('mainView');
         $ionicHistory.clearHistory();
-      },5000);
+      },1000);
 
       console.log(gameStateObject);
 
@@ -84,16 +84,27 @@ angular.module('SD.controllers', [])
       }
     });
 
-    socket.on('team-accepted', function(data){
-      GameService.gameState = data;
-      console.log('quest starting');
-
+    socket.on('next-quest', function (gameStateObject) {
+      GameService.gameState = gameStateObject;
+      $scope.refresh();
     });
 
-    socket.on('leader-selected-team', function(data){
-      GameService.gameState = data;
-      // $scope.refresh();
-      console.log('team selected should update view');
+    socket.on('leader-selected-team', function (data){
+      $scope.$apply(function(){
+        GameService.gameState = data;
+        GameService.gameState.votingForTeam = true;
+        $scope.refresh();
+      });
+    });
+
+    socket.on('start-quest', function (data) {
+      data.votingForTeam = false;
+      data.votingForQuest = true;
+      $scope.$apply(function() {
+        GameService.gameState = data;
+        $scope.refresh();
+      });
+      debugger;
     });
 
 });
