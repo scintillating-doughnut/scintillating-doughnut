@@ -20,100 +20,40 @@ angular.module('SD.controllers', [])
 
     // when player enters a name, update the $scope
     $scope.enterPlayerName = function (name) {
-      GameService.playerName = name;
-      $scope.playerName = name;
-
-      ////////////////////////////////////////
-      // send this input playerName to server
-      ////////////////////////////////////////
-      socket.emit('enterPlayerName', name);
-      console.log(GameService.playerName + " should've been sent to server.", $scope.readyHide);
+      GameService.enterPlayerName(name);
     };
 
     $scope.ready = function () {
-        socket.emit('ready', GameService.playerName);
-        GameService.gameStatus = 'Waiting on players...';
-        console.log('you are ready and waiting for everyone');
-
+      GameService.ready();
     };
 
     // when player votes yes for the team
     $scope.voteYesForTeam = function () {
-      // only count the vote if the player hasn't voted for the team yet
-      if (GameService.myPlayer.votedForTeam === false ) {
-        console.log('insisde yes', GameService.myPlayer)
-        GameService.myPlayer.teamVote = true;
-
-     // State that the player has voted for team already
-        GameService.myPlayer.votedForTeam = true;
-
-        ////////////////////////////////////////
-        // send this input playerName to server
-        ////////////////////////////////////////
-        socket.emit('teamPlayerVote', {name: GameService.playerName, teamVote:true});
-        $scope.votingForTeam = true;
-      }
+      GameService.voteYesForTeam();
     };
 
     // when player votes no for the team
     $scope.voteNoForTeam = function () {
-      // only count the vote if the player hasn't voted for the team yet
-      if (GameService.myPlayer.votedForTeam === false ) {
-        GameService.myPlayer.teamVote = false;
-
-        // State that the player has voted for team already
-        GameService.myPlayer.votedForTeam = true;
-
-        ////////////////////////////////////////
-        // send this input playerName to server
-        ////////////////////////////////////////
-        socket.emit('teamPlayerVote', {name:GameService.playerName, teamVote:false});
-        $scope.votingForTeam = true;
-      }
+      GameService.voteNoForTeam();
     };
 
     // when player votes yes for the quest
     $scope.voteYesForQuest = function () {
-      // only count the vote if the player hasn't voted for the quest yet
-      if (GameService.myPlayer.votedForQuest === false ) {
-        $GameService.myPlayer.questVote = true;
-
-      // State that the player has voted for quest already
-        GameService.myPlayer.votedForQuest = true;
-        console.log('my player',GameService.myPlayer);
-
-        ////////////////////////////////////////
-        // send this input playerName to server
-        ////////////////////////////////////////
-        socket.emit('questVote', {name: GameService.playerName, questVote: true});
-      }
+      GameService.voteYesForQuest();
     };
 
     // when player votes yes for the quest
     $scope.voteNoForQuest = function () {
-      // only count the vote if the player hasn't voted for the quest yet
-      if (GameService.myPlayer.votedForQuest === false ) {
-        GameService.myPlayer.questVote = false;
-
-
-        // State that the player has voted for quest already
-        GameService.myPlayer.votedForQuest = true;
-        console.log('my player',GameService.myPlayer);
-
-        ////////////////////////////////////////
-        // send this input playerName to server
-        ////////////////////////////////////////
-        socket.emit('questVote', {name: GameService.playerName, questVote: false});
-        }
+      GameService.voteNoForQuest();
     };
 
     // when captain finishes selecting quest team, and confirms
     // TODO
     $scope.confirmQuestMembers = function () {
-console.log('confirm')
+      console.log('confirm');
       // only sends data to server if this player is a captain
       if (GameService.myPlayer.isLeader) {
-        console.log('leader sleected team')
+        console.log('leader sleected team');
 
         // after setting those player's .onQuest to be true, send the gameState.
         GameService.gameState.votingForTeam =true;
