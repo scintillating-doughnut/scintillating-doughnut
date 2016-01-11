@@ -4,7 +4,6 @@ var socket = io();
 //prune
 angular.module('SD.controllers', [])
   .controller('gameCtrl', function ($scope, $window,$ionicHistory, $location, $state, GameService) {
-
     // initialize the controller
     $scope.refresh = function () {
       console.log('refreshing');
@@ -41,73 +40,83 @@ angular.module('SD.controllers', [])
     // when player votes yes for the team
     $scope.voteYesForTeam = function () {
       // only count the vote if the player hasn't voted for the team yet
-      // if ($scope.thisPlayer.votedForTeam === false ) {
-      //   $scope.thisPlayer.teamVote = true;
+      if (GameService.myPlayer.votedForTeam === false ) {
+        console.log('insisde yes', GameService.myPlayer)
+        GameService.myPlayer.teamVote = true;
 
-      //   // State that the player has voted for team already
-      //   $scope.thisPlayer.votedForTeam = true;
+     // State that the player has voted for team already
+        GameService.myPlayer.votedForTeam = true;
 
         ////////////////////////////////////////
         // send this input playerName to server
         ////////////////////////////////////////
-        socket.emit('teamPlayerVote', {name: GameService.playerName, teamVote:true})
-
+        socket.emit('teamPlayerVote', {name: GameService.playerName, teamVote:true});
+        $scope.votingForTeam = true;
+      }
     };
 
     // when player votes no for the team
     $scope.voteNoForTeam = function () {
       // only count the vote if the player hasn't voted for the team yet
-      // if ($scope.thisPlayer.votedForTeam === false ) {
-      //   $scope.thisPlayer.teamVote = false;
+      if (GameService.myPlayer.votedForTeam === false ) {
+        GameService.myPlayer.teamVote = false;
 
-      //   // State that the player has voted for team already
-      //   $scope.thisPlayer.votedForTeam = true;
+        // State that the player has voted for team already
+        GameService.myPlayer.votedForTeam = true;
 
         ////////////////////////////////////////
         // send this input playerName to server
         ////////////////////////////////////////
         socket.emit('teamPlayerVote', {name:GameService.playerName, teamVote:false});
-      
+        $scope.votingForTeam = true;
+      }
     };
 
     // when player votes yes for the quest
     $scope.voteYesForQuest = function () {
       // only count the vote if the player hasn't voted for the quest yet
-      // if ($scope.thisPlayer.votedForQuest === false ) {
-      //   $scope.thisPlayer.questVote = true;
+      if (GameService.myPlayer.votedForQuest === false ) {
+        $GameService.myPlayer.questVote = true;
 
-      //   // State that the player has voted for quest already
-      //   $scope.thisPlayer.votedForQuest = true;
+      // State that the player has voted for quest already
+        GameService.myPlayer.votedForQuest = true;
+        console.log('my player',GameService.myPlayer);
 
         ////////////////////////////////////////
         // send this input playerName to server
         ////////////////////////////////////////
         socket.emit('questVote', {name: GameService.playerName, questVote: true});
+      }
     };
 
     // when player votes yes for the quest
     $scope.voteNoForQuest = function () {
       // only count the vote if the player hasn't voted for the quest yet
-      if (GameService.myPlayer.votedForTeam === false ) {
+      if (GameService.myPlayer.votedForQuest === false ) {
         GameService.myPlayer.questVote = false;
+
 
         // State that the player has voted for quest already
         GameService.myPlayer.votedForQuest = true;
+        console.log('my player',GameService.myPlayer);
 
         ////////////////////////////////////////
         // send this input playerName to server
         ////////////////////////////////////////
         socket.emit('questVote', {name: GameService.playerName, questVote: false});
-      }
+        }
     };
 
     // when captain finishes selecting quest team, and confirms
     // TODO
     $scope.confirmQuestMembers = function () {
+console.log('confirm')
       // only sends data to server if this player is a captain
-      if (GameService.myPlayer.isCaptain) {
+      if (GameService.myPlayer.isLeader) {
+        console.log('leader sleected team')
 
         // after setting those player's .onQuest to be true, send the gameState.
+        GameService.gameState.votingForTeam =true;
         socket.emit('confirmQuestMembers', GameService.gameState);
       }
     };
@@ -140,6 +149,17 @@ angular.module('SD.controllers', [])
 
       console.log(gameStateObject);
     });
+
+    socket.on('team-accepted', function(data){
+      GameService.gameState = data;
+      console.log('quest starting');
+
+    });
+
+    socket.on('leader-selected-team', function(data){
+      GameService.gameState = data;
+      $scope.gameState = data;
+    })
 
 });
 

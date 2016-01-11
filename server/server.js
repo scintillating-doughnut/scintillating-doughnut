@@ -84,13 +84,17 @@ io.on('connection', function (client) {
       //if team vote passes, send quest members to gameLogic
       if(result){
         gameLogic.confirmQuestMembers(currentGame, questMembers);
+        console.log('questpassed')
+        io.emit('team-accepted', currentGame);
       //if team vote fails, reset quest members and increase
       //vote fails
       } else {
         gameLogic.resetQuestMembers(currentGame);
         questMembers = [];
         currentGame.teamVoteFails++;
+        gameLogic.rotateLeader(currentGame);
         gameLogic.checkGameOver(currentGame);
+
       }
       //emit state of current state to object
       io.emit('game-state', currentGame);
@@ -125,14 +129,16 @@ io.on('connection', function (client) {
 
   });
 
-  client.on('confirmQuestMembers', function (names) {
-    //send playerName and currentGame to gameLogic
-    for(var i = 0; i < names.length; i++){
-      questMembers.push(names[i]);
-    }
+  client.on('confirmQuestMembers', function (data) {
 
+  // game.confirmQuestMembers(data.gameState, data.names);
+  //   //send playerName and currentGame to gameLogic
+  //   for(var i = 0; i < names.length; i++){
+  //     questMembers.push(names[i]);
+  //   }
+    console.log('confirm',data);
     //send game state object to client
-    io.emit('captain-team-pick', currentGame);
+    io.emit('captain-team-pick', data);
 
   });
 

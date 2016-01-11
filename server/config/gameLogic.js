@@ -10,6 +10,8 @@ var GameState = function (players) {
   this.badWins = 0;
   this.teamVoteFails = 1;
   this.winner = null;
+  this.votingForTeam = false;
+  this.votingForQuest = false;
   this.numberOfPlayers = players.length;
   this.availableRoles = randomRoles(this.numberOfPlayers);
   this.questSet = {1 : null, 2 : null, 3 : null, 4 : null, 5 : null};
@@ -36,6 +38,8 @@ var CreatePlayer = function (playerName, role) {
   this.beenLady = false;
   this.specialAbility = [];
   this.image = getImage(role);
+  this.votedForTeam = false;
+  this.votedForQuest = false;
 };
 
 //assigns team good or bad based on role thats passed in.

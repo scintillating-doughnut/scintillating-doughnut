@@ -776,6 +776,13 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; }
 
+.votePic{
+  height: auto;
+  width: 49%;
+  padding:auto;
+  text-align: center;
+}
+
 .ion-alert:before {
   content: ""; }
 
@@ -9292,3 +9299,5 @@ a.button {
   opacity: 0;
   -webkit-transition-duration: 0s;
   transition-duration: 0s; }
+
+

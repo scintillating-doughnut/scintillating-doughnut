@@ -1,5 +1,5 @@
-    <div class="voteForTeam" ng-hide="gameState.votingForTeam" style="border:1px solid black;">
+    <div class="voteForTeam" ng-show="gameState.votingForTeam">
         Would you like this team to go on a quest together?<br>
-        <div class="voteYesForTeam" style="background-color:blue; text-align:center"  ng-click="voteYesForTeam()">Aye Aye</div>
-        <div class="voteNoForTeam" style="background-color:red; text-align:center"  ng-click="voteNoForTeam()">Nay Nay</div>
+        <img src="assets/pass.png" class="votePic" ng-click="voteYesForTeam()">
+        <img src="assets/no.png" class="votePic"   ng-click="voteNoForTeam()">
     </div>
