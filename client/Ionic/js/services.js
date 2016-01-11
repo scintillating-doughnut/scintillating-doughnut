@@ -45,6 +45,21 @@ angular.module('SD.services', [])
     }
   };
 
+  this.confirmQuestMembers = function () {
+    console.log('confirm');
+    // only sends data to server if this player is a captain
+    if (this.myPlayer.isLeader) {
+      // after setting those player's .onQuest to be true, send the gameState.
+      this.gameState.votingForTeam = true;
+      socket.emit('confirmQuestMembers', this.gameState);
+    }
+  };
+
+
+
+
+
+
   socket.on('game-state-notReady', function() {
     $scope.waitingStatus = 'Waiting for players...';
   });
