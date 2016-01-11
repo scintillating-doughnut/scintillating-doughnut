@@ -415,6 +415,7 @@ module.exports = {
   peopleNeededForQuest: peopleNeededForQuest,
   isAssassinSuccessful: isAssassinSuccessful,
   getImage: getImage
+
 };
 
 
