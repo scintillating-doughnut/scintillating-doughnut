@@ -8,8 +8,6 @@ angular.module('SD.services', [])
   this.gameStatus = '';
   this.myPlayer={};
 
-  socket.on()
-
   this.enterPlayerName = function (name) {
     this.playerName = name;
     socket.emit('enterPlayerName', name);
@@ -46,6 +44,87 @@ angular.module('SD.services', [])
       this.myPlayer.votedForQuest = true;
     }
   };
+
+  socket.on('game-state-notReady', function() {
+    $scope.waitingStatus = 'Waiting for players...';
+  });
+
+  socket.on('game-state-ready', function (gameStateObject){
+    alert("All players ready! See console for gamestate object");
+    console.log(gameStateObject);
+    // set global gameState with incoming gameStateobject
+    $scope.gameState = gameStateObject;
+
+    // Work around to update roster, due to ng-repeat one-time binding characteristic
+    $timeout(function() {
+      $scope.showRoster = true;
+    });
+
+    // assign $scope.thisPlayer to the correct player
+    // loop through all players, find the one that matches my name
+    $scope.updateMyself($scope.gameState);
+
+    // ask captain to select a team
+    if ($scope.thisPlayer.isLeader) {
+      alert('Use below checkbox to select a team for the quest');
+    } else {
+      alert('Waiting for captain to select a team');
+    }
+  });
+
+  // after captain selects a team, update everyone's roster, also ask player to vote on it
+  socket.on('captain-team-pick', function (gameStateObject) {
+    console.log('captain selected team');
+    $scope.gameState = gameStateObject;
+
+    // Display voting options
+    $scope.gameState.votingForTeam = true;
+
+    // Work around to update roster, due to ng-repeat one-time binding characteristic
+    $timeout(function() {
+      $scope.showRoster = true;
+    });
+  });
+
+  // if all voting are in, and the team passes, lets go on a quest
+  socket.on('start-quest', function (gameStateObject) {
+    console.log('team voting complete, going on a quest');
+    $scope.gameState = gameStateObject;
+    // debugger;
+    $scope.updateMyself($scope.gameState);
+
+    // quest started, enable voting for the quest for players who are on the quest
+    if ($scope.thisPlayer.onQuest) {
+      $scope.gameState.votingForQuest = true;
+    }
+
+    $timeout(function() {
+      $scope.showRoster = true;
+    });
+  });
+
+  socket.on('team-vote-failed', function (gameStateObject) {
+    console.log('team voting complete, failed, not going on a quest');
+    $scope.gameState = gameStateObject;
+    $scope.updateMyself($scope.gameState);
+  });
+
+  socket.on('game-over', function (gameStateObject) {
+    $scope.gameState = gameStateObject;
+    if ($scope.gameState.winner) {
+      console.log('Good team wins!');
+    } else {
+      console.log('Bad team wins!');
+    }
+  });
+
+  socket.on('quest-game', function (result) {
+    if (result) {
+      alert('This quest passed');
+    } else {
+      alert('This quest failed');
+    }
+  });
 
 }]);
 
