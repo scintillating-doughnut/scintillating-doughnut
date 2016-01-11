@@ -49,6 +49,7 @@ io.on('connection', function (client) {
     console.log("Players", currentPlayers);
     console.log("Game Object", currentGame);
     io.emit('messages', data +' added ');
+    io.emit('game-players', currentPlayers);
     console.log("Player Array ", currentPlayers);
   });
 
