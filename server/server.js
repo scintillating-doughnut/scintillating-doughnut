@@ -16,7 +16,7 @@ var currentGame;
 var teamVoteCounter = 0;
 var questVoteCounter = 0;
 var currentQuestSize = 0;
-//var questMembers = [];
+var questMembers = [];
 
 //this function logs all the get and post requests made to
 //the server.
@@ -76,6 +76,8 @@ io.on('connection', function (client) {
   client.on('teamPlayerVote', function (data) {
     //increase teamVoteCounter for every vote that I get
     teamVoteCounter++;
+    console.log('teamVote COunter' , teamVoteCounter)
+    console.log(currentGame.players.length);
 
     //send each playerVote to gameLogic with the currentGame
     gameLogic.setTeamVote(currentGame, data.name, data.teamVote);
@@ -88,10 +90,16 @@ io.on('connection', function (client) {
 
       //if team vote passes, send quest members to gameLogic
       if(result){
+        for(var i = 0; i < currentGame.numberOfPlayers; i++){
+          if(currentGame.players[i].onQuest){
+            questMembers.push(currentGame.players[i].name);
+          }
+        }
 
         gameLogic.confirmQuestMembers(currentGame, questMembers);
-        console.log('questpassed')
+        console.log('teampassed');
         io.emit('team-accepted', currentGame);
+        questMembers = [];
 
       //if team vote fails, reset quest members and increase
       //vote fails

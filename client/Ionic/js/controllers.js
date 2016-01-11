@@ -5,6 +5,7 @@ var socket = io();
 angular.module('SD.controllers', [])
   .controller('gameCtrl', function ($scope, $window,$ionicHistory, $location, $state, GameService) {
     // initialize the controller
+    $scope.service = GameService;
     $scope.refresh = function () {
       console.log('refreshing');
       $scope.gameState = GameService.gameState;
@@ -76,7 +77,7 @@ angular.module('SD.controllers', [])
     $scope.voteYesForQuest = function () {
       // only count the vote if the player hasn't voted for the quest yet
       if (GameService.myPlayer.votedForQuest === false ) {
-        $GameService.myPlayer.questVote = true;
+        GameService.myPlayer.questVote = true;
 
       // State that the player has voted for quest already
         GameService.myPlayer.votedForQuest = true;
@@ -120,12 +121,12 @@ console.log('confirm')
         socket.emit('confirmQuestMembers', GameService.gameState);
       }
     };
-    //TODO 
+    //TODO
     $scope.startQuestMemberSelection= function () {
       // only sends data to server if this player is a captain
         // after setting those player's .onQuest to be true, send the gameState.
         socket.emit('questSize', GameService.gameState);
-      
+
     };
     ////////////////////
     /* LISTENERS FOR BACKEND EVENTS */
@@ -151,8 +152,11 @@ console.log('confirm')
     });
 
     socket.on('team-accepted', function(data){
+      data.votingForTeam=false;
+      data.votingForQuest=true;
       GameService.gameState = data;
       console.log('quest starting');
+      $scope.refresh();
 
     });
 
@@ -160,11 +164,11 @@ console.log('confirm')
       GameService.gameState = data;
       $scope.refresh();
       console.log('team selected should update view');
-    })
+    });
 
 });
 
-  
+
 
 
   //   socket.on('questSizeReply', function(){
