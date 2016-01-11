@@ -1,0 +1,13 @@
+<ion-view title="Ready">
+    <ion-content overflow-scroll="true" padding="true" class="has-header">
+        <h3> Hello {{playerName}}! </h3>
+        <div>
+            <p>Current players are: </p>
+        </div>
+        <ion-list>
+            <ion-item ng-repeat="player in players track by $index">{{ player }} - {{ status }}</ion-item>
+        </ion-list>
+
+        <button ng-click="" class="button button-stable button-block" ng-show="canBeReady && status==='NOT READY'">Ready!</button>
+    </ion-content>
+</ion-view>

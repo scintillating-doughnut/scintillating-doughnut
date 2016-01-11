@@ -11,12 +11,12 @@ var port = process.env.PORT || 3000;
 //array of current players, will get populated as players
 //join the game
 var currentPlayers = [];
-var questMembers = [];
 var readyCounter = 0;
 var currentGame;
 var teamVoteCounter = 0;
 var questVoteCounter = 0;
 var currentQuestSize = 0;
+//var questMembers = [];
 
 //this function logs all the get and post requests made to
 //the server.
@@ -37,16 +37,19 @@ var server = app.listen(port, function () {
 // use socket.io with express server
 var io = require('socket.io').listen(server);
 
-io.on('connection', function (client) {  
+io.on('connection', function (client) {
   console.log('Client connected...');
 
   //on hearing enterPlayerName event, push player name
   //to array
   client.on('enterPlayerName', function (data) {
     console.log('player name received: ', data);
-    
+
     currentPlayers.push(data);
+    console.log("Players", currentPlayers);
+    console.log("Game Object", currentGame);
     io.emit('messages', data +' added ');
+    io.emit('game-players', currentPlayers);
     console.log("Player Array ", currentPlayers);
   });
 
@@ -60,6 +63,8 @@ io.on('connection', function (client) {
     //to gameLogic to start game
     if(readyCounter === currentPlayers.length){
       currentGame = new gameLogic.GameState(currentPlayers);
+      currentPlayers = [];
+      readyCounter = 0;
       io.emit('game-state-ready', currentGame);
       console.log("teamReady");
       console.log(currentGame);
@@ -71,12 +76,12 @@ io.on('connection', function (client) {
   client.on('teamPlayerVote', function (data) {
     //increase teamVoteCounter for every vote that I get
     teamVoteCounter++;
-    
+
     //send each playerVote to gameLogic with the currentGame
     gameLogic.setTeamVote(currentGame, data.name, data.teamVote);
 
     //this will happen when each player has voted
-    if(teamVoteCounter===currentPlayers.length){
+    if(teamVoteCounter===currentGame.players.length){
       //send to gameLogic to canvas votes, game logic will
       //return if vote passed or not
       var result = gameLogic.teamVoteOutcome(currentGame);
@@ -89,8 +94,7 @@ io.on('connection', function (client) {
       //vote fails
       } else {
         gameLogic.resetQuestMembers(currentGame);
-        questMembers = [];
-        // currentGame.teamVoteFails++;
+        //questMembers = [];
         gameLogic.checkGameOver(currentGame);
         if (gameLogic.gameOver) {
           io.emit('game-over', currentGame);
@@ -98,7 +102,7 @@ io.on('connection', function (client) {
           io.emit('team-vote-failed', currentGame);
         }
       }
-      
+
       //clear teamVoteCounter to 0 for the next team vote
       teamVoteCounter = 0;
 
@@ -109,11 +113,11 @@ io.on('connection', function (client) {
   });
 
   client.on('teamQuestVote', function (data) {
-    //increase quest vote 
+    //increase quest vote
     questVoteCounter++;
 
     gameLogic.setQuestVote(currentGame, data.name, data.questVote);
-    
+
     if(questVoteCounter === currentGame.numberOfPlayersOnQuest){
       var result = gameLogic.questVoteOutcome(currentGame);
       gameLogic.finishQuest(currentGame);
@@ -122,7 +126,7 @@ io.on('connection', function (client) {
       if (currentGame.gameOver) {
         io.emit('game-over', currentGame);
       } else {
-        //sends 
+        //sends
         io.emit('quest-game', result);
         io.emit('game-state-ready', currentGame);
       }
@@ -136,9 +140,10 @@ io.on('connection', function (client) {
 
   client.on('confirmQuestMembers', function (names) {
     //send playerName and currentGame to gameLogic
-    for(var i = 0; i < names.length; i++){
-      questMembers.push(names[i]);
-    }
+    // for(var i = 0; i < names.length; i++){
+    //   questMembers.push(names[i]);
+    // }
+    //questMembers = names.slice();
 
     /////////////////////////////////////////////////
     //// WHY NOT JUST SET questMembers to names /////
