@@ -15,6 +15,7 @@ var GameState = function (players) {
   this.numberOfPlayers = players.length;
   this.availableRoles = randomRoles(this.numberOfPlayers);
   this.questSet = {1 : null, 2 : null, 3 : null, 4 : null, 5 : null};
+  this.gameTime = 0;
 
   for (var i = 0; i < this.numberOfPlayers; i++) {
     this.players.push(new CreatePlayer(this.allPlayersNames[i],this.availableRoles[i]));
@@ -23,6 +24,10 @@ var GameState = function (players) {
   for (var j = 0; j < this.numberOfPlayers; j++) {
     this.players[j].specialAbility = specialPowers(this, this.players[j]);
   }
+
+  setInterval(function(){
+    this.gameTime++;
+  }.bind(this), 1000);
 };
 
 //ceates new player based on role and name passed in.
@@ -328,6 +333,7 @@ var isAssassinSuccessful = function (gameInstance, name) {
     return false;
 };
 
+// Display special views for people with special abilities 
 var specialPowers = function (gameInstance, player) {
   var result = [];
   var allPlayers = gameInstance.players;
@@ -357,7 +363,8 @@ var specialPowers = function (gameInstance, player) {
         }
       }
     }
-    console.log('name ' , player.name, 'sees: ',result);
+    // uncomment for special roles logic debugging
+    // console.log('name ' , player.name, 'sees: ',result);
   return result;
 };
 
@@ -460,4 +467,7 @@ module.exports = {
 
 // var test = new GameState(['six','dakota','kevin','kris','justin','hacker','seven']);
 // console.log(test);
+// setTimeout(function(){
+//   console.log(test)
+// }, 10000)
 
