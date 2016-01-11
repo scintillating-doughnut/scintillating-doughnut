@@ -138,7 +138,7 @@ io.on('connection', function (client) {
   //   }
     console.log('confirm',data);
     //send game state object to client
-    io.emit('captain-team-pick', data);
+    io.emit('leader-selected-team', data);
 
   });
 

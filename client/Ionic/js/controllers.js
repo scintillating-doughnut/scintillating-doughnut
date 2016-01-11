@@ -158,7 +158,8 @@ console.log('confirm')
 
     socket.on('leader-selected-team', function(data){
       GameService.gameState = data;
-      $scope.gameState = data;
+      $scope.refresh();
+      console.log('team selected should update view');
     })
 
 });
