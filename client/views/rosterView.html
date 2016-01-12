@@ -6,6 +6,6 @@
     Team Vote: {{player.teamVote}}
   </li>
 
-  <button ng-click="confirmQuestMembers()">Confirm Team Selection</button>
+  <button ng-click="confirmQuestMembers()" ng-show="isLeader === true">Confirm Team Selection</button>
 </div>
 
