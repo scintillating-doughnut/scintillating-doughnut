@@ -1,18 +1,17 @@
-    <div class="userInput" style="border:2px solid black">
-      <h3>Player Input</h3>
-      <div class="voteForTeam" ng-show="gameState.votingForTeam" style="border:1px solid black;">
-        Would you like this team to go on a quest together?<br>
-        <div class="voteYesForTeam" ng-click="voteYesForTeam()"><img src="/assets/pass.png"></div>
-        <div class="voteNoForTeam"  ng-click="voteNoForTeam()"><img src="/assets/no.png"></div>
+    <div class="userInput" style="text-align:center;">
+      <div class="voteForTeam" ng-show="gameState.votingForTeam">
+        <li class='item'>Would you like this team to go on a quest together?</li>
+        <img class="voteYesForTeam" ng-click="voteYesForTeam()" src="/assets/pass.png" style='width:49%; height:auto;'>
+        <img class="voteNoForTeam"  ng-click="voteNoForTeam()" src="/assets/no.png" style='width:49%; height:auto;'>
 <!-- 
         <button ng-click="voteYesForTeam()">Aye Aye</button>
         <button ng-click="voteNoForTeam()">Nay Nay</button> -->
       </div>
 
-      <div class="voteForQuest" ng-show="gameState.votingForQuest" style="clear:both; border:1px solid black">
-        <img src="/assets/success.png"><br>
-        <div class="voteYesForQuest" ng-click="voteYesForQuest()">Let us conquer this quest</div>
-        <div class="voteNoForQuest" ng-click="voteNoForQuest()"><img src="/assets/fail.png"></div>
+      <div class="voteForQuest" ng-show="gameState.votingForQuest">
+      <li class='item'>Would you like this team to go on a quest together?</li>
+        <img src="assets/success.png" class="voteYesForQuest" ng-click="voteYesForQuest()" style='width:49%; height:auto;'>
+        <img src='assets/fail.png' class="voteNoForQuest" ng-click="voteNoForQuest()" style='width:49%; height:auto;'>
 
 
 <!--         <button ng-click="voteYesForQuest()">Let us conquer this quest</button>

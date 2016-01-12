@@ -3,58 +3,58 @@
   <head>
     <meta charset="utf-8" />
     <title>Breakfast Game</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.1/angular.min.js"></script>
+    <link href="http://code.ionicframework.com/1.2.4/css/ionic.css" rel="stylesheet">
+    <script src="http://code.ionicframework.com/1.2.4/js/ionic.bundle.js"></script>
+    <!-- // <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.1/angular.min.js"></script> -->
     <script src="https://cdn.socket.io/socket.io-1.4.1.min.js"></script>
     <script src="controllers/MainController.js"></script>
-
-    
     <script src="services/services.js"></script>
     <script src="app.js"></script>
-    
-
-    <link rel="stylesheet" type="text/css" href="styles.css" title="Default stylesheet"/>
   </head>
-  <body ng-app='SD' ng-controller="gameCtrl">
+  <body ng-app='SD' ng-controller="gameCtrl" animation="slide-left-right-ios7">
+    <ion-content overflow-scroll='true' padding='true' class='has-header'>
 
     <!-- <div ng-include='"views/EnterPlayerView.html"'></div> -->
 
     <div class="EnterPlayer">
-      <form ng-submit="enterPlayerName()" style="float:left" ng-show="!playerJoined">
-        <input type="text" ng-model="nameInput" placeholder="Enter Player Name">
+      <form class='list' ng-submit="enterPlayerName()" ng-show="!playerJoined">
+        <label class='item item-input'>
+          <input type="text" ng-model="nameInput" placeholder="Enter Player Name" required>
+        </label>
+          <input type='submit' class='button button-stable button-block'>
       </form>
-      <button ng-click="ready()" style="float:left;" ng-show="!playerReadied && playerJoined">Ready</button>
-      You are: {{playerName}}
     </div>
-    
+    <div ng-show="playerJoined">
+      <h1 class='title' style='text-align: center;'>You are: {{playerName}}</h1>
+      <button class='button button-stable button-block' ng-click="ready()" ng-show="!playerReadied && playerJoined">Ready</button>
+      <div ng-show='playerReadied'>
 
-    <button ng-click="toggleRole()" style="float:left;clear:both;">Show/Hide Role</button>
-    <div style='float:left;clear: both; border:2px solid black; margin-top:10px' ng-if='showRoleToggle' class='specialpowers'>
-    <p>Your character is: <span style='font-weight:bold;'>{{thisPlayer.role}}</span></p>
-    <img src='{{thisPlayer.image}}'>
-    <p>You are on the <span style='font-weight:bold;'>{{thisPlayer.team}}</span> side. 
-    <p>You can see:</p>
-    <div ng-repeat='see in thisPlayer.specialAbility'>
-      <li>{{see}}</li>
-    </div>
-    </div>
+        <img src='assets/role.png' ng-click="toggleRole()" style="position:fixed; top:0; left:0; z-index:100;">
+        <div style='position:fixed; top:0; left:0; z-index:10; width:device-width; height:auto;' ng-if='showRoleToggle' class='specialpowers'>
+          <img src='{{thisPlayer.image}}'>
+          <div class='list'>You can see:</div>
+          <div ng-repeat='see in thisPlayer.specialAbility'>
+            <li class='list item' >{{see}}</li>
+          </div>
+        </div>
 
-    
-    <div ng-include='"views/gameBoardView.html"'></div>
+        <div ng-include='"views/gameBoardView.html"'></div>
+        <div ng-include='"views/userInputView.html"'></div>
 
-    <div ng-include='"views/userInputView.html"'></div>
+        <!-- <div ng-include='"views/rosterView.html"' ng-if="showRoster"></div> -->
+          <h3 class='bar bar-stable' style='text-align:center;'>Roster</h3>
+          <ion-list class="list" ng-if="showRoster">
+            <ion-item class='item' ng-repeat="player in gameState.players" style='text-align:center;'>
+                <input type="checkbox" ng-model="player.onQuest">{{player.name}}||
+                On team: {{player.onQuest}} ||
+                Team Vote: {{player.teamVote}}
+              </ion-item>
+            </ion-list>
 
-    <!-- <div ng-include='"views/rosterView.html"' ng-if="showRoster"></div> -->
-    <div class="rosterView" style="clear:both; border:2px solid black; margin-top:10px;" ng-if="showRoster">
-      <h3>Roster</h3>
-      <li ng-repeat="player in gameState.players">
-        <label><input type="checkbox" ng-model="player.onQuest">{{player.name}}</label> ||
-        On team: {{player.onQuest}} ||
-        Team Vote: {{player.teamVote}}
-      </li>
+          <button ng-show="isLeader" class='button button-stable button-block' ng-click="confirmQuestMembers()">Confirm Team Selection</button>
 
-      <button ng-click="confirmQuestMembers()">Confirm Team Selection</button>
-    </div>
-
-
+        </div>
+      </div>
+    </ion-content>
   </body>
 </html>
