@@ -27,9 +27,10 @@
     </div>
     
 
-    <button ng-click="toggleRole()" ng-if= 'showRoleToggle' style="float:left;clear:both;">Show/Hide Role</button>
-    <div style='float:left;clear: both; border:2px solid black; margin-top:10px' ng-if='showRoster' class='specialpowers'>
+    <button ng-click="toggleRole()" style="float:left;clear:both;">Show/Hide Role</button>
+    <div style='float:left;clear: both; border:2px solid black; margin-top:10px' ng-if='showRoleToggle' class='specialpowers'>
     <p>Your character is: <span style='font-weight:bold;'>{{thisPlayer.role}}</span></p>
+    <img src='{{thisPlayer.image}}'>
     <p>You are on the <span style='font-weight:bold;'>{{thisPlayer.team}}</span> side. 
     <p>You can see:</p>
     <div ng-repeat='see in thisPlayer.specialAbility'>

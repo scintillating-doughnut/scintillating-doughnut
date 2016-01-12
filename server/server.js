@@ -63,6 +63,8 @@ io.on('connection', function (client) {
       io.emit('game-state-ready', currentGame);
       console.log("teamReady");
       console.log(currentGame);
+      readyCounter = 0;
+      currentPlayers = [];
     } else {
       io.emit('game-state-notReady', 'Not Ready' );
     }
@@ -71,17 +73,18 @@ io.on('connection', function (client) {
   client.on('teamPlayerVote', function (data) {
     //increase teamVoteCounter for every vote that I get
     teamVoteCounter++;
-    
+
     //send each playerVote to gameLogic with the currentGame
     gameLogic.setTeamVote(currentGame, data.name, data.teamVote);
 
     //this will happen when each player has voted
-    if(teamVoteCounter===currentPlayers.length){
+    if(teamVoteCounter===currentGame.numberOfPlayers){
       //send to gameLogic to canvas votes, game logic will
       //return if vote passed or not
       var result = gameLogic.teamVoteOutcome(currentGame);
 
       //if team vote passes, send quest members to gameLogic
+      console.log("result", result);
       if(result){
         // start quest
         io.emit('start-quest', currentGame);

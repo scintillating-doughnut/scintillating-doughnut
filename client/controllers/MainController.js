@@ -19,6 +19,7 @@ var app = angular.module('SD', [])
     $scope.thisPlayer = {};
     $scope.playerJoined = false;
     $scope.playerReadied = false;
+    $scope.isLeader = false;
 
     // when player enters a name, update the $scope
     $scope.enterPlayerName = function () {
@@ -43,13 +44,25 @@ var app = angular.module('SD', [])
           break;
         }
       }
+      $scope.findLeader(gameObject);
     };
 
+  $scope.findLeader = function (gameObject) {
+    //console.log("in findLeader", gameObject.players[0].isLeader);
+
+    for(var i = 0; i < gameObject.players.length;i++){
+      $scope.isLeader = gameObject.players[i].isLeader;
+      if(gameObject.players[i].isLeader){
+        $scope.leader = gameObject.players[i].name;
+      }
+    }
+  }
+
     $scope.toggleRole = function () {
-      if ($scope.showRoster) { 
-        $scope.showRoster = false;
+      if ($scope.showRoleToggle) { 
+        $scope.showRoleToggle = false;
       } else {
-        $scope.showRoster = true;
+        $scope.showRoleToggle = true;
       }
     }
 
@@ -149,7 +162,7 @@ var app = angular.module('SD', [])
         if(questMembers.length === $scope.gameState.numberOfPlayersOnQuest) {
           socket.emit('confirmQuestMembers', questMembers);
         } else {
-          alert('Select ' + $scope.gameState.numberOfPlayersOnQuest + ' players for this quest.');
+          $scope.messageAlert = 'Select ' + $scope.gameState.numberOfPlayersOnQuest + ' players for this quest.';
         }
       }
     };
@@ -169,13 +182,14 @@ var app = angular.module('SD', [])
     });
 
     socket.on('game-state-ready', function (gameStateObject){
-      alert("All players ready! See console for gamestate object");
+      //alert("All players ready! See console for gamestate object");
       console.log(gameStateObject);
       // set global gameState with incoming gameStateobject
       $scope.gameState = gameStateObject;
 
       // Work around to update roster, due to ng-repeat one-time binding characteristic
       $timeout(function() {
+        $scope.findLeader($scope.gameState);
         $scope.showRoster = true;
         $scope.showSpecialPowers = true;
         $scope.showRoleToggle = true;
@@ -187,9 +201,9 @@ var app = angular.module('SD', [])
 
       // ask captain to select a team
       if ($scope.thisPlayer.isLeader) {
-        alert('Use below checkbox to select a team for the quest');
+        $scope.messageAlert = 'You are the captain. Use below checkbox to select a team for the quest';
       } else {
-        alert('Waiting for captain to select a team');
+        $scope.messageAlert = $scope.leader + ' is the captain. Waiting for captain to select a team';
       }
     });
 
@@ -200,16 +214,19 @@ var app = angular.module('SD', [])
 
       // Display voting options
       $scope.gameState.votingForTeam = true;
+      $scope.messageAlert = $scope.leader + ' picked the team. Vote to pass or fail this team.';
 
       // Work around to update roster, due to ng-repeat one-time binding characteristic
       $timeout(function() {
         $scope.showRoster = true;
       });
+
     });
 
     // if all voting are in, and the team passes, lets go on a quest
     socket.on('start-quest', function (gameStateObject) {
       console.log('team voting complete, going on a quest');
+      $scope.messageAlert = 'The team passed. The team is going on a quest now.'
       $scope.gameState = gameStateObject;
       // debugger;
       $scope.updateMyself($scope.gameState);
@@ -222,30 +239,66 @@ var app = angular.module('SD', [])
       $timeout(function() {
         $scope.showRoster = true;
       });
+
+
     });
 
     socket.on('team-vote-failed', function (gameStateObject) {
       console.log('team voting complete, failed, not going on a quest');
       $scope.gameState = gameStateObject;
-      $scope.updateMyself($scope.gameState);
+      $timeout(function() {
+        $scope.updateMyself($scope.gameState);
+        $scope.messageAlert = 'Team vote failed. ' + $scope.leader + ' is the new captain. Waiting for team selection.';
+      });
     });
 
     socket.on('game-over', function (gameStateObject) {
       $scope.gameState = gameStateObject;
+      addStats(gameStateobject);
       if ($scope.gameState.winner) {
-        console.log('Good team wins!');
+        $scope.messageAlert = 'Good team wins!';
       } else {
-        console.log('Bad team wins!');
+        $scope.messageAlert = 'Bad team wins!';
       }
     });
 
     socket.on('quest-game', function (result) {
       if (result) {
-        alert('This quest passed');
+        $scope.messageAlert = 'The quest passed. ' + $scope.leader + ' is the new captain. Waiting for team selection.';
       } else {
-        alert('This quest failed');
+        $scope.messageAlert = 'The quest failed. ' + $scope.leader + ' is the new captain. Waiting for team selection.';
       }
     });
+
+
+    /* GAME STATS TRACKER. Should probably put this somewhere in a services re: Kevin */
+
+    var getAllStats = function () {
+      return $http({
+        method: "GET",
+        url: "/api/stats"
+      }).then(function (resp) {
+      return resp.data;
+      });
+    };
+    var addStats = function (gameStateObject) {
+      return $http({
+        method: 'POST',
+        url: "/api/stats",
+        data: gameStateObject 
+      })
+      .then(function (resp) {
+        return resp;
+      });
+    };
+
+    $scope.getAll = function () {
+      getAllStats().then(function (res) {
+        $scope.stats = res;
+      })
+    }
+
+    $scope.getAll();
 
 });
 
